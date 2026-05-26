@@ -1,10 +1,10 @@
 # AGENTS.md — web_pdf_signer
 
 ## Project overview
-Single-file browser PDF signing tool (`firmapdf.html`). No build system, no dependencies beyond CDN.
+Single-file browser PDF signing tool (`index.html`). No build system, no dependencies beyond CDN.
 
 ## Setup
-- No installation needed. Open `firmapdf.html` in any modern browser.
+- No installation needed. Open `index.html` in any modern browser.
 - Requires internet on first load (CDN: pdf.js 2.16.105, pdf-lib 1.17.1).
 
 ## Key facts
@@ -25,7 +25,7 @@ Single-file browser PDF signing tool (`firmapdf.html`). No build system, no depe
 - Coordinate mapping: `pdfX = canvasX / scale`, `pdfY = pageHeight - (canvasY / scale)`.
 
 ## Testing
-- Manual only: open `firmapdf.html` in browser, load a PDF, draw, save, verify output.
+- Manual only: open `index.html` in browser, load a PDF, draw, save, verify output.
 - No automated tests.
 
 ## Repo
