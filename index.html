@@ -83,7 +83,7 @@ header .spacer{flex:1}
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.3.0</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.3.1</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -370,7 +370,7 @@ function createTextBox(x, y) {
   renderTextBoxDOM(box);
   selectTextBox(id);
   const el = document.querySelector(`.text-box[data-id="${id}"] .text-content`);
-  if (el) setTimeout(() => el.focus(), 0);
+  if (el) el.focus();
 }
 
 function renderTextBoxDOM(box) {
@@ -462,20 +462,20 @@ function getResizeDir(el, clientX, clientY) {
 
 function onTextBoxPointerDown(e) {
   e.stopPropagation();
-  e.preventDefault();
   const el = e.currentTarget;
   const id = Number(el.dataset.id);
   selectTextBox(id);
+
+  state.textDragStartX = e.clientX;
+  state.textDragStartY = e.clientY;
+  state.resizeDir = '';
 
   const dir = getResizeDir(el, e.clientX, e.clientY);
   if (dir) {
     state.resizingText = true;
     state.resizeDir = dir;
-  } else {
-    state.draggingText = true;
   }
-  state.textDragStartX = e.clientX;
-  state.textDragStartY = e.clientY;
+
   const box = state.textBoxes.find(b => b.id === id);
   if (box) {
     state.textDragOrigX = box.x;
@@ -486,6 +486,14 @@ function onTextBoxPointerDown(e) {
 }
 
 document.addEventListener('pointermove', e => {
+  const DRAG_THRESHOLD = 5;
+
+  if (!state.draggingText && !state.resizingText && state.selectedTextId !== null &&
+      (Math.abs(e.clientX - state.textDragStartX) > DRAG_THRESHOLD ||
+       Math.abs(e.clientY - state.textDragStartY) > DRAG_THRESHOLD)) {
+    state.draggingText = true;
+  }
+
   if (state.draggingText) {
     const box = state.textBoxes.find(b => b.id === state.selectedTextId);
     if (!box) return;
@@ -552,11 +560,11 @@ document.addEventListener('keydown', e => {
 });
 
 function onPointerDown(e) {
-  e.preventDefault();
   state.activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
   const count = Object.keys(state.activePointers).length;
 
   if (count >= 2 && !state.pinchActive) {
+    e.preventDefault();
     state.pinchActive = true;
     state.drawing = false;
     state.textMode = false;
