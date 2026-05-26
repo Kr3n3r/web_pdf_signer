@@ -232,11 +232,9 @@ function moveDraw(e) {
   if (!state.drawing) return;
   e.preventDefault();
   const p = getCanvasCoords(e);
-  const mx = (state.lastX + p.x) / 2;
-  const my = (state.lastY + p.y) / 2;
   drawCtx.beginPath();
   drawCtx.moveTo(state.lastX, state.lastY);
-  drawCtx.quadraticCurveTo(state.lastX, state.lastY, mx, my);
+  drawCtx.lineTo(p.x, p.y);
   drawCtx.stroke();
   state.lastX = p.x;
   state.lastY = p.y;
