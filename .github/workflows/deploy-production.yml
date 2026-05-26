@@ -1,0 +1,24 @@
+name: Deploy production
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: _ghpages
+      - run: |
+          mkdir -p deploy
+          if [ -d _ghpages/previews ]; then cp -r _ghpages/previews deploy/; fi
+          cp index.html deploy/index.html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          publish_branch: gh-pages
+          keep_files: false

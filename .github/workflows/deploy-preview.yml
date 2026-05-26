@@ -1,0 +1,19 @@
+name: Deploy preview
+on:
+  push:
+    branches: [feature/*]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p deploy/previews/${{ github.ref_name }}
+          cp index.html deploy/previews/${{ github.ref_name }}/index.html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          publish_branch: gh-pages
+          keep_files: true
