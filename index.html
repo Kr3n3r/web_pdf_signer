@@ -8,8 +8,8 @@
 <script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
-:root{--bg:#F4F1DE;--text:#3D405B;--header-bg:#3D405B;--header-text:#F4F1DE;--accent:#E07A5F;--accent-hover:#c96a4f;--nav-bg:#F4F1DE;--nav-border:#F2CC8F;--nav-btn-bg:transparent;--nav-btn-border:#81B29A;--nav-btn-color:#3D405B;--nav-btn-hover:#81B29A;--nav-btn-hover-color:#F4F1DE;--empty-color:#3D405B;--control-bg:#F4F1DE;--control-border:#F2CC8F;--control-label:#3D405B;--input-border:#81B29A;--range-accent:#E07A5F;--btn-bg:#81B29A;--btn-color:#F4F1DE;--btn-hover:#6d9a7f;--clear-btn-bg:#E07A5F;--clear-btn-color:#F4F1DE;--clear-btn-hover:#c96a4f;--undo-btn-bg:#3D405B;--undo-btn-color:#F4F1DE;--undo-btn-hover:#2d2e44;--save-btn-bg:#E07A5F;--save-btn-color:#F4F1DE;--save-btn-hover:#c96a4f;--tool-btn-bg:#F2CC8F;--tool-btn-color:#3D405B;--tool-btn-active-bg:#E07A5F;--tool-btn-active-color:#F4F1DE;--loading-bg:rgba(0,0,0,.5);--text-box-border:#81B29A;--text-box-bg:rgba(244,241,222,.7)}
-[data-theme="dark"]{--bg:#1a1a2e;--text:#eee;--header-bg:linear-gradient(135deg,#16213e,#0f3460);--header-text:#eee;--accent:#e94560;--accent-hover:#d63851;--nav-bg:#16213e;--nav-border:#0f3460;--nav-btn-bg:transparent;--nav-btn-border:#0f3460;--nav-btn-color:#eee;--nav-btn-hover:#0f3460;--nav-btn-hover-color:#eee;--empty-color:#666;--control-bg:#16213e;--control-border:#0f3460;--control-label:#999;--input-border:#0f3460;--range-accent:#e94560;--btn-bg:#0f3460;--btn-color:#eee;--btn-hover:#1a5276;--clear-btn-bg:#533;--clear-btn-color:#e88;--clear-btn-hover:#744;--undo-btn-bg:#335;--undo-btn-color:#88e;--undo-btn-hover:#447;--save-btn-bg:#e94560;--save-btn-color:#fff;--save-btn-hover:#d63851;--tool-btn-bg:#0f3460;--tool-btn-color:#eee;--tool-btn-active-bg:#e94560;--tool-btn-active-color:#fff;--loading-bg:rgba(0,0,0,.7);--text-box-border:#e94560;--text-box-bg:rgba(30,30,60,.7)}
+:root{--bg:#F4F1DE;--text:#3D405B;--header-bg:#3D405B;--header-text:#F4F1DE;--accent:#E07A5F;--accent-hover:#c96a4f;--nav-bg:#F4F1DE;--nav-border:#F2CC8F;--nav-btn-bg:transparent;--nav-btn-border:#81B29A;--nav-btn-color:#3D405B;--nav-btn-hover:#81B29A;--nav-btn-hover-color:#F4F1DE;--empty-color:#3D405B;--control-bg:#F4F1DE;--control-border:#F2CC8F;--control-label:#3D405B;--input-border:#81B29A;--range-accent:#E07A5F;--btn-bg:#81B29A;--btn-color:#F4F1DE;--btn-hover:#6d9a7f;--clear-btn-bg:#E07A5F;--clear-btn-color:#F4F1DE;--clear-btn-hover:#c96a4f;--undo-btn-bg:#3D405B;--undo-btn-color:#F4F1DE;--undo-btn-hover:#2d2e44;--save-btn-bg:#E07A5F;--save-btn-color:#F4F1DE;--save-btn-hover:#c96a4f;--tool-btn-bg:#F2CC8F;--tool-btn-color:#3D405B;--tool-btn-active-bg:#E07A5F;--tool-btn-active-color:#F4F1DE;--loading-bg:rgba(0,0,0,.5);--text-box-border:#81B29A;--text-box-bg:rgba(244,241,222,.7);--toast-bg:#3D405B;--toast-color:#F4F1DE}
+[data-theme="dark"]{--bg:#1a1a2e;--text:#eee;--header-bg:linear-gradient(135deg,#16213e,#0f3460);--header-text:#eee;--accent:#e94560;--accent-hover:#d63851;--nav-bg:#16213e;--nav-border:#0f3460;--nav-btn-bg:transparent;--nav-btn-border:#0f3460;--nav-btn-color:#eee;--nav-btn-hover:#0f3460;--nav-btn-hover-color:#eee;--empty-color:#666;--control-bg:#16213e;--control-border:#0f3460;--control-label:#999;--input-border:#0f3460;--range-accent:#e94560;--btn-bg:#0f3460;--btn-color:#eee;--btn-hover:#1a5276;--clear-btn-bg:#533;--clear-btn-color:#e88;--clear-btn-hover:#744;--undo-btn-bg:#335;--undo-btn-color:#88e;--undo-btn-hover:#447;--save-btn-bg:#e94560;--save-btn-color:#fff;--save-btn-hover:#d63851;--tool-btn-bg:#0f3460;--tool-btn-color:#eee;--tool-btn-active-bg:#e94560;--tool-btn-active-color:#fff;--loading-bg:rgba(0,0,0,.7);--text-box-border:#e94560;--text-box-bg:rgba(30,30,60,.7);--toast-bg:#16213e;--toast-color:#eee}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-user-select:none;user-select:none}
 body{display:flex;flex-direction:column}
@@ -78,12 +78,31 @@ header .spacer{flex:1}
   #controls input[type="range"]{width:60px}
   #controls button{padding:6px 12px;font-size:12px}
 }
+
+/* ── Animations ── */
+header{background-size:200% 200%;animation:gradientShift 8s ease infinite}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+#controls.active{animation:slideUp .3s ease-out}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+#emptyState .icon{animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+button:active:not(:disabled){transform:scale(0.94)}
+#themeToggle.spin{animation:themeSpin .4s ease}
+@keyframes themeSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.text-box.appear{animation:boxAppear .25s ease-out}
+@keyframes boxAppear{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+#saveBtn.pulse{animation:savePulse .5s ease}
+@keyframes savePulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toast-bg);color:var(--toast-color);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;opacity:0;transition:opacity .3s,transform .3s;z-index:200;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.spinner{border-width:3px}
+html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-content{transition:background-color .3s ease,color .3s ease,border-color .3s ease}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.3.1</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.4.0</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -123,6 +142,7 @@ header .spacer{flex:1}
 </div>
 
 <div id="loading"><div class="spinner"></div></div>
+<div id="toast"></div>
 
 <script>
 (function(){
@@ -220,6 +240,14 @@ function resetZoom() {
 
 function showLoading(on) {
   loading.classList.toggle('active', on);
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 fileBtn.addEventListener('click', () => fileInput.click());
@@ -351,6 +379,9 @@ setTheme(savedTheme);
 themeToggle.addEventListener('click', () => {
   const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   setTheme(next);
+  themeToggle.classList.remove('spin');
+  void themeToggle.offsetWidth;
+  themeToggle.classList.add('spin');
 });
 
 /* ── Text tool ── */
@@ -403,6 +434,8 @@ function renderTextBoxDOM(box) {
   el.appendChild(del);
 
   pdfWrapper.appendChild(el);
+  el.classList.add('appear');
+  el.addEventListener('animationend', () => el.classList.remove('appear'), { once: true });
 
   content.addEventListener('input', () => {
     const b = state.textBoxes.find(bx => bx.id === box.id);
@@ -699,6 +732,9 @@ async function savePDF() {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 5000);
+    saveBtn.classList.add('pulse');
+    setTimeout(() => saveBtn.classList.remove('pulse'), 500);
+    showToast('PDF guardado con éxito ✓');
   } catch (err) {
     alert('Error al guardar: ' + err.message);
     console.error(err);
