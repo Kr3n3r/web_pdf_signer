@@ -8,22 +8,26 @@
 <script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
+:root{--bg:#F4F1DE;--text:#3D405B;--header-bg:#3D405B;--header-text:#F4F1DE;--accent:#E07A5F;--accent-hover:#c96a4f;--nav-bg:#F4F1DE;--nav-border:#F2CC8F;--nav-btn-bg:transparent;--nav-btn-border:#81B29A;--nav-btn-color:#3D405B;--nav-btn-hover:#81B29A;--nav-btn-hover-color:#F4F1DE;--empty-color:#3D405B;--control-bg:#F4F1DE;--control-border:#F2CC8F;--control-label:#3D405B;--input-border:#81B29A;--range-accent:#E07A5F;--btn-bg:#81B29A;--btn-color:#F4F1DE;--btn-hover:#6d9a7f;--clear-btn-bg:#E07A5F;--clear-btn-color:#F4F1DE;--clear-btn-hover:#c96a4f;--undo-btn-bg:#3D405B;--undo-btn-color:#F4F1DE;--undo-btn-hover:#2d2e44;--save-btn-bg:#E07A5F;--save-btn-color:#F4F1DE;--save-btn-hover:#c96a4f;--tool-btn-bg:#F2CC8F;--tool-btn-color:#3D405B;--tool-btn-active-bg:#E07A5F;--tool-btn-active-color:#F4F1DE;--loading-bg:rgba(0,0,0,.5);--text-box-border:#81B29A;--text-box-bg:rgba(244,241,222,.7)}
+[data-theme="dark"]{--bg:#1a1a2e;--text:#eee;--header-bg:linear-gradient(135deg,#16213e,#0f3460);--header-text:#eee;--accent:#e94560;--accent-hover:#d63851;--nav-bg:#16213e;--nav-border:#0f3460;--nav-btn-bg:transparent;--nav-btn-border:#0f3460;--nav-btn-color:#eee;--nav-btn-hover:#0f3460;--nav-btn-hover-color:#eee;--empty-color:#666;--control-bg:#16213e;--control-border:#0f3460;--control-label:#999;--input-border:#0f3460;--range-accent:#e94560;--btn-bg:#0f3460;--btn-color:#eee;--btn-hover:#1a5276;--clear-btn-bg:#533;--clear-btn-color:#e88;--clear-btn-hover:#744;--undo-btn-bg:#335;--undo-btn-color:#88e;--undo-btn-hover:#447;--save-btn-bg:#e94560;--save-btn-color:#fff;--save-btn-hover:#d63851;--tool-btn-bg:#0f3460;--tool-btn-color:#eee;--tool-btn-active-bg:#e94560;--tool-btn-active-color:#fff;--loading-bg:rgba(0,0,0,.7);--text-box-border:#e94560;--text-box-bg:rgba(30,30,60,.7)}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1a1a2e;color:#eee;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-user-select:none;user-select:none}
 body{display:flex;flex-direction:column}
-header{background:linear-gradient(135deg,#16213e,#0f3460);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3);z-index:10}
-header h1{font-size:18px;font-weight:600;color:#e94560;white-space:nowrap}
+header{background:var(--header-bg);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3);z-index:10}
+header h1{font-size:18px;font-weight:600;color:var(--accent);white-space:nowrap}
 header .spacer{flex:1}
-#fileBtn{background:#e94560;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
-#fileBtn:hover{background:#d63851}
+#fileBtn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+#fileBtn:hover{background:var(--accent-hover)}
+#themeToggle{background:transparent;border:1px solid rgba(255,255,255,.3);color:var(--header-text);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#themeToggle:hover{background:rgba(255,255,255,.1)}
 #fileInput{display:none}
-#navBar{background:#16213e;padding:6px 16px;display:flex;align-items:center;justify-content:center;gap:16px;flex-shrink:0;border-bottom:1px solid #0f3460}
-#navBar button{background:0 0;border:1px solid #0f3460;color:#eee;width:36px;height:36px;border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#navBar{background:var(--nav-bg);padding:6px 16px;display:flex;align-items:center;justify-content:center;gap:16px;flex-shrink:0;border-bottom:1px solid var(--nav-border)}
+#navBar button{background:var(--nav-btn-bg);border:1px solid var(--nav-btn-border);color:var(--nav-btn-color);width:36px;height:36px;border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 #navBar button:disabled{opacity:.3;cursor:default}
-#navBar button:hover:not(:disabled){background:#0f3460}
+#navBar button:hover:not(:disabled){background:var(--nav-btn-hover);color:var(--nav-btn-hover-color)}
 #navBar span{font-size:14px;min-width:80px;text-align:center}
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-#emptyState{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#666;z-index:1}
+#emptyState{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--empty-color);z-index:1}
 #emptyState .icon{font-size:64px;opacity:.5}
 #emptyState p{font-size:16px}
 #pdfContainer{position:relative;flex:1;display:none;justify-content:center;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -31,25 +35,43 @@ header .spacer{flex:1}
 #pdfWrapper{position:relative;margin:auto}
 #pdfCanvas,#drawCanvas{position:absolute;top:0;left:0;display:block}
 #drawCanvas{touch-action:none;cursor:crosshair}
-#controls{background:#16213e;padding:10px 16px;display:none;flex-shrink:0;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid #0f3460}
+#controls{background:var(--control-bg);padding:10px 16px;display:none;flex-shrink:0;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--control-border)}
 #controls.active{display:flex}
-#controls label{font-size:12px;color:#999;display:flex;align-items:center;gap:6px}
-#controls input[type="color"]{width:36px;height:36px;border:2px solid #0f3460;border-radius:8px;cursor:pointer;background:0 0;padding:2px}
-#controls input[type="range"]{width:80px;accent-color:#e94560}
+#controls label{font-size:12px;color:var(--control-label);display:flex;align-items:center;gap:6px}
+#controls input[type="color"]{width:36px;height:36px;border:2px solid var(--input-border);border-radius:8px;cursor:pointer;background:0 0;padding:2px}
+#controls input[type="range"]{width:80px;accent-color:var(--range-accent)}
+#controls input[type="number"]{width:50px;background:var(--bg);color:var(--text);border:1px solid var(--input-border);border-radius:6px;padding:4px 6px;font-size:13px}
 #controls .btn-group{display:flex;gap:8px;margin-left:auto}
-#controls button{background:#0f3460;color:#eee;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
-#controls button:hover{background:#1a5276}
-#controls #clearBtn{background:#533;color:#e88}
-#controls #clearBtn:hover{background:#744}
-#controls #undoBtn{background:#335;color:#88e}
-#controls #undoBtn:hover{background:#447}
+#controls button{background:var(--btn-bg);color:var(--btn-color);border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+#controls button:hover{background:var(--btn-hover)}
+#controls #clearBtn{background:var(--clear-btn-bg);color:var(--clear-btn-color)}
+#controls #clearBtn:hover{background:var(--clear-btn-hover)}
+#controls #undoBtn{background:var(--undo-btn-bg);color:var(--undo-btn-color)}
+#controls #undoBtn:hover{background:var(--undo-btn-hover)}
 #controls #undoBtn:disabled{opacity:.3;cursor:default}
-#controls #saveBtn{background:#e94560;color:#fff}
-#controls #saveBtn:hover{background:#d63851}
-#loading{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100}
+#controls #saveBtn{background:var(--save-btn-bg);color:var(--save-btn-color)}
+#controls #saveBtn:hover{background:var(--save-btn-hover)}
+#controls #textToggle{background:var(--tool-btn-bg);color:var(--tool-btn-color);font-weight:700;font-size:15px;padding:8px 12px}
+#controls #textToggle.active{background:var(--tool-btn-active-bg);color:var(--tool-btn-active-color)}
+#loading{position:fixed;inset:0;background:var(--loading-bg);display:none;align-items:center;justify-content:center;z-index:100}
 #loading.active{display:flex}
-.spinner{width:40px;height:40px;border:4px solid #333;border-top-color:#e94560;border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:40px;height:40px;border:4px solid #333;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.text-box{position:absolute;min-width:40px;min-height:28px;cursor:move;z-index:20}
+.text-box .text-content{width:100%;height:100%;outline:none;padding:6px;font-family:sans-serif;overflow:hidden;word-wrap:break-word;white-space:pre-wrap;border:1px dashed transparent;border-radius:4px;color:var(--text)}
+.text-box.selected .text-content{border-color:var(--text-box-border);background:var(--text-box-bg)}
+.text-box .resize-handle{position:absolute;width:10px;height:10px;background:var(--text-box-border);border:1px solid var(--bg);border-radius:2px;display:none;z-index:22}
+.text-box.selected .resize-handle{display:block}
+.text-box .resize-handle.nw{top:-5px;left:-5px;cursor:nw-resize}
+.text-box .resize-handle.n{top:-5px;left:50%;margin-left:-5px;cursor:n-resize}
+.text-box .resize-handle.ne{top:-5px;right:-5px;cursor:ne-resize}
+.text-box .resize-handle.w{top:50%;margin-top:-5px;left:-5px;cursor:w-resize}
+.text-box .resize-handle.e{top:50%;margin-top:-5px;right:-5px;cursor:e-resize}
+.text-box .resize-handle.sw{bottom:-5px;left:-5px;cursor:sw-resize}
+.text-box .resize-handle.s{bottom:-5px;left:50%;margin-left:-5px;cursor:s-resize}
+.text-box .resize-handle.se{bottom:-5px;right:-5px;cursor:se-resize}
+.text-box .text-delete{position:absolute;top:-30px;right:0;width:24px;height:24px;background:var(--accent);color:#fff;border:none;border-radius:4px;font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:23}
+.text-box.selected .text-delete{display:flex}
 @media(max-width:600px){
   header h1{font-size:15px}
   #controls{gap:8px;padding:8px 12px}
@@ -61,8 +83,9 @@ header .spacer{flex:1}
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.2.0</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.3.0</span></h1>
   <div class="spacer"></div>
+  <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
   <input type="file" id="fileInput" accept=".pdf">
 </header>
@@ -89,7 +112,9 @@ header .spacer{flex:1}
   <div id="controls">
     <label>🎨 <input type="color" id="penColor" value="#000000"></label>
     <label>─ <input type="range" id="penWidth" min="1" max="12" value="3"></label>
+    <label>T <input type="number" id="textFontSize" min="8" max="72" value="16"></label>
     <div class="btn-group">
+      <button id="textToggle">T</button>
       <button id="undoBtn" disabled>↶ Deshacer</button>
       <button id="clearBtn">✕ Limpiar</button>
       <button id="saveBtn">💾 Guardar PDF</button>
@@ -115,12 +140,33 @@ const state = {
   lastY: 0,
   undoStack: [],
   zoomScale: 1,
+  panX: 0,
+  panY: 0,
   pinchActive: false,
   pinchStartDist: 0,
   pinchStartZoom: 1,
+  pinchStartPanX: 0,
+  pinchStartPanY: 0,
+  pinchStartCx: 0,
+  pinchStartCy: 0,
+  pinchLayoutLeft: 0,
+  pinchLayoutTop: 0,
+  pinchContentX: 0,
+  pinchContentY: 0,
   activePointers: {},
-  pinchZoom: 1,
-  zoomSnapshot: null,
+  textMode: false,
+  textBoxes: [],
+  selectedTextId: null,
+  draggingText: false,
+  resizingText: false,
+  resizeDir: '',
+  textDragStartX: 0,
+  textDragStartY: 0,
+  textDragOrigX: 0,
+  textDragOrigY: 0,
+  textDragOrigW: 0,
+  textDragOrigH: 0,
+  textIdCounter: 0,
 };
 
 const $ = id => document.getElementById(id);
@@ -138,9 +184,12 @@ const emptyState = $('emptyState');
 const loading = $('loading');
 const penColor = $('penColor');
 const penWidth = $('penWidth');
+const textFontSize = $('textFontSize');
 const undoBtn = $('undoBtn');
 const clearBtn = $('clearBtn');
 const saveBtn = $('saveBtn');
+const themeToggle = $('themeToggle');
+const textToggle = $('textToggle');
 
 let pdfCtx = pdfCanvas.getContext('2d');
 let drawCtx = drawCanvas.getContext('2d');
@@ -156,6 +205,17 @@ function captureSnapshot() {
   c.height = drawCanvas.height;
   c.getContext('2d').drawImage(drawCanvas, 0, 0);
   return c;
+}
+
+function applyTransform() {
+  pdfWrapper.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoomScale})`;
+}
+
+function resetZoom() {
+  state.zoomScale = 1;
+  state.panX = 0;
+  state.panY = 0;
+  pdfWrapper.style.transform = '';
 }
 
 function showLoading(on) {
@@ -196,8 +256,7 @@ async function renderPage(num) {
     const vp = page.getViewport({ scale: 1 });
     const maxW = pdfContainer.clientWidth - 32 || 800;
     const fitScale = Math.min(maxW / vp.width, 1.5);
-    const scale = fitScale * state.zoomScale;
-    const viewport = page.getViewport({ scale });
+    const viewport = page.getViewport({ scale: fitScale });
     const w = Math.floor(viewport.width);
     const h = Math.floor(viewport.height);
     pdfCanvas.width = w;
@@ -206,13 +265,16 @@ async function renderPage(num) {
     drawCanvas.height = h;
     pdfWrapper.style.width = w + 'px';
     pdfWrapper.style.height = h + 'px';
-    state.scale = scale;
+    state.scale = fitScale;
     drawCtx.clearRect(0, 0, w, h);
     state.undoStack = [];
     state.hasDrawn = false;
     undoBtn.disabled = true;
+    resetZoom();
+    removeAllTextBoxes();
     const renderTask = page.render({ canvasContext: pdfCtx, viewport });
     await renderTask.promise;
+    applyTransform();
     state.currentPage = num;
     pageInfo.textContent = num + ' / ' + state.totalPages;
     prevBtn.disabled = num <= 1;
@@ -278,6 +340,217 @@ function undo() {
   undoBtn.disabled = state.undoStack.length === 0;
 }
 
+/* ── Theme toggle ── */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+const savedTheme = localStorage.getItem('theme') || 'light';
+setTheme(savedTheme);
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  setTheme(next);
+});
+
+/* ── Text tool ── */
+function createTextBox(x, y) {
+  const id = ++state.textIdCounter;
+  const box = {
+    id,
+    x: Math.max(0, x),
+    y: Math.max(0, y),
+    w: 160,
+    h: 40,
+    text: '',
+    fontSize: Number(textFontSize.value),
+    fontColor: penColor.value,
+  };
+  state.textBoxes.push(box);
+  renderTextBoxDOM(box);
+  selectTextBox(id);
+  const el = document.querySelector(`.text-box[data-id="${id}"] .text-content`);
+  if (el) setTimeout(() => el.focus(), 0);
+}
+
+function renderTextBoxDOM(box) {
+  const el = document.createElement('div');
+  el.className = 'text-box';
+  el.dataset.id = box.id;
+  el.style.left = box.x + 'px';
+  el.style.top = box.y + 'px';
+  el.style.width = box.w + 'px';
+  el.style.height = box.h + 'px';
+
+  const content = document.createElement('div');
+  content.className = 'text-content';
+  content.contentEditable = true;
+  content.textContent = box.text;
+  content.style.fontSize = box.fontSize + 'px';
+  content.style.color = box.fontColor;
+  el.appendChild(content);
+
+  const dirs = ['nw','n','ne','w','e','sw','s','se'];
+  dirs.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'resize-handle ' + d;
+    el.appendChild(h);
+  });
+
+  const del = document.createElement('button');
+  del.className = 'text-delete';
+  del.textContent = '✕';
+  el.appendChild(del);
+
+  pdfWrapper.appendChild(el);
+
+  content.addEventListener('input', () => {
+    const b = state.textBoxes.find(bx => bx.id === box.id);
+    if (b) b.text = content.textContent || '';
+  });
+
+  el.addEventListener('pointerdown', onTextBoxPointerDown);
+  del.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    deleteTextBox(box.id);
+  });
+}
+
+function selectTextBox(id) {
+  document.querySelectorAll('.text-box').forEach(el => el.classList.remove('selected'));
+  state.selectedTextId = id;
+  if (id !== null) {
+    const el = document.querySelector(`.text-box[data-id="${id}"]`);
+    if (el) el.classList.add('selected');
+  }
+}
+
+function deleteTextBox(id) {
+  const el = document.querySelector(`.text-box[data-id="${id}"]`);
+  if (el) el.remove();
+  state.textBoxes = state.textBoxes.filter(b => b.id !== id);
+  if (state.selectedTextId === id) state.selectedTextId = null;
+}
+
+function removeAllTextBoxes() {
+  document.querySelectorAll('.text-box').forEach(el => el.remove());
+  state.textBoxes = [];
+  state.selectedTextId = null;
+}
+
+function getTextBoxAt(clientX, clientY) {
+  const els = document.querySelectorAll('.text-box');
+  for (const el of els) {
+    const r = el.getBoundingClientRect();
+    if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) {
+      return el;
+    }
+  }
+  return null;
+}
+
+function getResizeDir(el, clientX, clientY) {
+  const r = el.getBoundingClientRect();
+  const margin = 12;
+  const dirs = [];
+  if (clientY - r.top <= margin) dirs.push('n');
+  if (r.bottom - clientY <= margin) dirs.push('s');
+  if (clientX - r.left <= margin) dirs.push('w');
+  if (r.right - clientX <= margin) dirs.push('e');
+  return dirs.join('');
+}
+
+function onTextBoxPointerDown(e) {
+  e.stopPropagation();
+  e.preventDefault();
+  const el = e.currentTarget;
+  const id = Number(el.dataset.id);
+  selectTextBox(id);
+
+  const dir = getResizeDir(el, e.clientX, e.clientY);
+  if (dir) {
+    state.resizingText = true;
+    state.resizeDir = dir;
+  } else {
+    state.draggingText = true;
+  }
+  state.textDragStartX = e.clientX;
+  state.textDragStartY = e.clientY;
+  const box = state.textBoxes.find(b => b.id === id);
+  if (box) {
+    state.textDragOrigX = box.x;
+    state.textDragOrigY = box.y;
+    state.textDragOrigW = box.w;
+    state.textDragOrigH = box.h;
+  }
+}
+
+document.addEventListener('pointermove', e => {
+  if (state.draggingText) {
+    const box = state.textBoxes.find(b => b.id === state.selectedTextId);
+    if (!box) return;
+    const dx = (e.clientX - state.textDragStartX) / state.zoomScale;
+    const dy = (e.clientY - state.textDragStartY) / state.zoomScale;
+    box.x = Math.max(0, state.textDragOrigX + dx);
+    box.y = Math.max(0, state.textDragOrigY + dy);
+    const el = document.querySelector(`.text-box[data-id="${box.id}"]`);
+    if (el) {
+      el.style.left = box.x + 'px';
+      el.style.top = box.y + 'px';
+    }
+  }
+  if (state.resizingText) {
+    const box = state.textBoxes.find(b => b.id === state.selectedTextId);
+    if (!box) return;
+    const dx = (e.clientX - state.textDragStartX) / state.zoomScale;
+    const dy = (e.clientY - state.textDragStartY) / state.zoomScale;
+    const d = state.resizeDir;
+    let nx = state.textDragOrigX, ny = state.textDragOrigY;
+    let nw = state.textDragOrigW, nh = state.textDragOrigH;
+    if (d.includes('e')) nw = Math.max(40, state.textDragOrigW + dx);
+    if (d.includes('w')) { nw = Math.max(40, state.textDragOrigW - dx); nx = state.textDragOrigX + (state.textDragOrigW - nw); }
+    if (d.includes('s')) nh = Math.max(28, state.textDragOrigH + dy);
+    if (d.includes('n')) { nh = Math.max(28, state.textDragOrigH - dy); ny = state.textDragOrigY + (state.textDragOrigH - nh); }
+    box.x = nx; box.y = ny; box.w = nw; box.h = nh;
+    const el = document.querySelector(`.text-box[data-id="${box.id}"]`);
+    if (el) {
+      el.style.left = nx + 'px';
+      el.style.top = ny + 'px';
+      el.style.width = nw + 'px';
+      el.style.height = nh + 'px';
+    }
+  }
+});
+
+document.addEventListener('pointerup', e => {
+  if (state.draggingText || state.resizingText) {
+    state.draggingText = false;
+    state.resizingText = false;
+    state.resizeDir = '';
+  }
+});
+
+textToggle.addEventListener('click', () => {
+  state.textMode = !state.textMode;
+  textToggle.classList.toggle('active', state.textMode);
+  drawCanvas.style.cursor = state.textMode ? 'text' : 'crosshair';
+  if (!state.textMode) selectTextBox(null);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (state.selectedTextId !== null && document.activeElement && document.activeElement.closest('.text-box')) {
+      const sel = window.getSelection();
+      if (sel && sel.isCollapsed && document.activeElement.textContent === '') {
+        e.preventDefault();
+        deleteTextBox(state.selectedTextId);
+      }
+    } else if (e.key === 'Delete' && state.selectedTextId !== null) {
+      deleteTextBox(state.selectedTextId);
+    }
+  }
+});
+
 function onPointerDown(e) {
   e.preventDefault();
   state.activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -286,15 +559,35 @@ function onPointerDown(e) {
   if (count >= 2 && !state.pinchActive) {
     state.pinchActive = true;
     state.drawing = false;
+    state.textMode = false;
+    textToggle.classList.remove('active');
     const pts = Object.values(state.activePointers);
+    const cx = (pts[0].x + pts[1].x) / 2;
+    const cy = (pts[0].y + pts[1].y) / 2;
+    const rect = pdfWrapper.getBoundingClientRect();
     state.pinchStartDist = getDist(pts[0], pts[1]);
     state.pinchStartZoom = state.zoomScale;
-    state.pinchZoom = state.zoomScale;
-    state.zoomSnapshot = captureSnapshot();
+    state.pinchStartPanX = state.panX;
+    state.pinchStartPanY = state.panY;
+    state.pinchStartCx = cx;
+    state.pinchStartCy = cy;
+    state.pinchLayoutLeft = rect.left - state.panX;
+    state.pinchLayoutTop = rect.top - state.panY;
+    state.pinchContentX = (cx - state.pinchLayoutLeft - state.panX) / state.zoomScale;
+    state.pinchContentY = (cy - state.pinchLayoutTop - state.panY) / state.zoomScale;
     return;
   }
 
-  if (count === 1 && !state.pinchActive) startDraw(e);
+  if (count === 1 && !state.pinchActive) {
+    if (state.textMode) {
+      const rect = pdfWrapper.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / state.zoomScale;
+      const y = (e.clientY - rect.top) / state.zoomScale;
+      createTextBox(x, y);
+    } else {
+      startDraw(e);
+    }
+  }
 }
 
 function onPointerMove(e) {
@@ -308,36 +601,31 @@ function onPointerMove(e) {
     if (pts.length >= 2) {
       const dist = getDist(pts[0], pts[1]);
       const ratio = dist / state.pinchStartDist;
-      const zoom = Math.max(0.5, Math.min(5, state.pinchStartZoom * ratio));
-      state.pinchZoom = zoom;
-      pdfWrapper.style.transform = `scale(${zoom})`;
-      pdfWrapper.style.transformOrigin = 'top left';
+      const newZoom = Math.max(0.5, Math.min(5, state.pinchStartZoom * ratio));
+
+      const cx = (pts[0].x + pts[1].x) / 2;
+      const cy = (pts[0].y + pts[1].y) / 2;
+
+      state.zoomScale = newZoom;
+      state.panX = cx - state.pinchLayoutLeft - state.pinchContentX * newZoom;
+      state.panY = cy - state.pinchLayoutTop - state.pinchContentY * newZoom;
+
+      applyTransform();
     }
     return;
   }
 
-  moveDraw(e);
+  if (!state.draggingText && !state.resizingText) moveDraw(e);
 }
 
-async function onPointerUp(e) {
+function onPointerUp(e) {
   delete state.activePointers[e.pointerId];
-
   if (state.pinchActive) {
     if (Object.keys(state.activePointers).length < 2) {
       state.pinchActive = false;
-      pdfWrapper.style.transform = '';
-      state.zoomScale = Math.max(0.5, Math.min(5, state.pinchZoom));
-      const snap = state.zoomSnapshot;
-      state.zoomSnapshot = null;
-      await renderPage(state.currentPage);
-      if (snap) {
-        drawCtx.drawImage(snap, 0, 0, drawCanvas.width, drawCanvas.height);
-        state.hasDrawn = true;
-      }
     }
     return;
   }
-
   endDraw();
 }
 
@@ -364,6 +652,7 @@ clearBtn.addEventListener('click', () => {
   state.undoStack = [];
   state.hasDrawn = false;
   undoBtn.disabled = true;
+  removeAllTextBoxes();
 });
 
 undoBtn.addEventListener('click', undo);
@@ -374,6 +663,7 @@ async function savePDF() {
   if (!state.file || !state.pdfDoc) return;
   showLoading(true);
   try {
+    if (state.textBoxes.length > 0) renderTextBoxesToCanvas();
     const origBytes = await state.file.arrayBuffer();
     const pdfDoc = await PDFLib.PDFDocument.load(origBytes);
     const pages = pdfDoc.getPages();
@@ -407,6 +697,17 @@ async function savePDF() {
   } finally {
     showLoading(false);
   }
+}
+
+function renderTextBoxesToCanvas() {
+  state.textBoxes.forEach(box => {
+    drawCtx.font = box.fontSize + 'px sans-serif';
+    drawCtx.fillStyle = box.fontColor;
+    const lines = box.text.split('\n');
+    lines.forEach((line, i) => {
+      drawCtx.fillText(line, box.x + 6, box.y + 6 + box.fontSize * (i + 1));
+    });
+  });
 }
 
 window.addEventListener('resize', () => {
