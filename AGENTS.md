@@ -22,6 +22,7 @@ Single-file browser PDF signing tool (`index.html`). No build system, no depende
 - Pointer Events API handles touch + mouse uniformly.
 - Continuous stroke via `lineTo` segments (avoids gaps from midpoint‑based approaches).
 - Undo stack stores `ImageData` snapshots per stroke.
+- Pinch-to-zoom tracks 2+ active pointers; CSS transform gives live feedback, then re‑renders PDF at final scale on release. Snapshot preserves drawing across zoom levels.
 - On save: draw canvas → PNG blob → pdf-lib `embedPng` → placed on target page.
 - Coordinate mapping: `pdfX = canvasX / scale`, `pdfY = pageHeight - (canvasY / scale)`.
 
