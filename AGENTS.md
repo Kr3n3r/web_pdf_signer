@@ -20,7 +20,8 @@ Single-file browser PDF signing tool (`index.html`). No build system, no depende
 ## Architecture notes
 - PDF rendered to `#pdfCanvas` via pdf.js. User draws on `#drawCanvas` (overlay).
 - Pointer Events API handles touch + mouse uniformly.
-- Smooth curves via `quadraticCurveTo` with midpoints.
+- Continuous stroke via `lineTo` segments (avoids gaps from midpoint‑based approaches).
+- Undo stack stores `ImageData` snapshots per stroke.
 - On save: draw canvas → PNG blob → pdf-lib `embedPng` → placed on target page.
 - Coordinate mapping: `pdfX = canvasX / scale`, `pdfY = pageHeight - (canvasY / scale)`.
 
@@ -29,4 +30,8 @@ Single-file browser PDF signing tool (`index.html`). No build system, no depende
 - No automated tests.
 
 ## Repo
-https://github.com/Kr3n3r/web_pdf_signer (private)
+https://github.com/Kr3n3r/web_pdf_signer (public)
+
+## Version updates
+- Update `#version` span in `<header>` when making user‑visible changes.
+- Follow semver: bump MINOR for new features, PATCH for fixes.
