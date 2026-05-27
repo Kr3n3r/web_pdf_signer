@@ -57,10 +57,10 @@ header .spacer{flex:1}
 #loading.active{display:flex}
 .spinner{width:40px;height:40px;border:4px solid #333;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.text-box{position:absolute;min-width:40px;min-height:28px;cursor:move;z-index:20}
+.text-box{position:absolute;min-width:40px;min-height:28px;cursor:move;z-index:20;touch-action:none}
 .text-box .text-content{width:100%;height:100%;outline:none;padding:6px;font-family:sans-serif;overflow:hidden;word-wrap:break-word;white-space:pre-wrap;border:1px dashed transparent;border-radius:4px;color:var(--text)}
 .text-box.selected .text-content{border-color:var(--text-box-border);background:var(--text-box-bg)}
-.text-box .resize-handle{position:absolute;width:10px;height:10px;background:var(--text-box-border);border:1px solid var(--bg);border-radius:2px;display:none;z-index:22}
+.text-box .resize-handle{position:absolute;width:10px;height:10px;background:var(--text-box-border);border:1px solid var(--bg);border-radius:2px;display:none;z-index:22;touch-action:none}
 .text-box.selected .resize-handle{display:block}
 .text-box .resize-handle.nw{top:-5px;left:-5px;cursor:nw-resize}
 .text-box .resize-handle.n{top:-5px;left:50%;margin-left:-5px;cursor:n-resize}
@@ -227,6 +227,7 @@ const state = {
   textDragOrigH: 0,
   textIdCounter: 0,
   justCreatedTextBox: false,
+  textPointerDown: false,
 };
 
 /* ── Diagnostic logger ── */
@@ -622,6 +623,7 @@ function getResizeDir(el, clientX, clientY) {
 function onTextBoxPointerDown(e) {
   e.stopPropagation();
   state.justCreatedTextBox = false;
+  state.textPointerDown = true;
   const el = e.currentTarget;
   const id = Number(el.dataset.id);
   selectTextBox(id);
@@ -650,7 +652,7 @@ document.addEventListener('pointermove', e => {
   const DRAG_THRESHOLD = 15;
 
   if (!state.draggingText && !state.resizingText && state.selectedTextId !== null &&
-      !state.justCreatedTextBox &&
+      state.textPointerDown && !state.justCreatedTextBox &&
       (Math.abs(e.clientX - state.textDragStartX) > DRAG_THRESHOLD ||
        Math.abs(e.clientY - state.textDragStartY) > DRAG_THRESHOLD)) {
     state.draggingText = true;
@@ -706,12 +708,14 @@ document.addEventListener('pointerup', e => {
     state.draggingText = false;
     state.resizingText = false;
     state.resizeDir = '';
+    state.textPointerDown = false;
   }
 });
 document.addEventListener('pointercancel', () => {
   state.draggingText = false;
   state.resizingText = false;
   state.resizeDir = '';
+  state.textPointerDown = false;
 });
 
 textToggle.addEventListener('click', () => {
@@ -766,6 +770,7 @@ function onPointerDown(e) {
 
   if (count === 1 && !state.pinchActive) {
     if (state.textMode) {
+      state.textPointerDown = false;
       state.draggingText = false;
       state.resizingText = false;
       state.resizeDir = '';
