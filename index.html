@@ -228,6 +228,61 @@ const state = {
   textIdCounter: 0,
 };
 
+/* ── Diagnostic logger ── */
+const diag = (() => {
+  const MAX = 200;
+  const logs = [];
+  const levels = { ERROR: 'E', WARN: 'W', INFO: 'I', DEBUG: 'D' };
+
+  function push(lvl, msg, data) {
+    logs.push({ ts: Date.now(), lvl, msg, data: data || null });
+    if (logs.length > MAX) logs.shift();
+  }
+
+  function log(lvl, consoleFn, args) {
+    const msg = args[0] || '';
+    const rest = args.length > 1 ? Array.from(args).slice(1) : null;
+    push(lvl, msg, rest);
+    consoleFn.apply(console, args);
+  }
+
+  return {
+    error(...args) { log(levels.ERROR, console.error, args); },
+    warn(...args)  { log(levels.WARN,  console.warn,  args); },
+    info(...args)  { log(levels.INFO,  console.info,  args); },
+    debug(...args) { log(levels.DEBUG, console.log,   args); },
+    clear() { logs.length = 0; },
+    getAll() { return logs.slice(); },
+    getText() {
+      return logs.map(e => {
+        const d = new Date(e.ts);
+        const t = d.toLocaleTimeString() + '.' + String(d.getMilliseconds()).padStart(3,'0');
+        return `[${t}][${e.lvl}] ${e.msg}${e.data ? ' ' + JSON.stringify(e.data) : ''}`;
+      }).join('\n');
+    },
+    getDeviceInfo() {
+      return {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        screen: `${screen.width}x${screen.height}`,
+        viewport: `${window.innerWidth}x${window.innerHeight}`,
+        dpr: window.devicePixelRatio || 1,
+        touchPoints: navigator.maxTouchPoints || 0,
+      };
+    },
+  };
+})();
+
+window.onerror = (msg, url, line, col, err) => {
+  diag.error('Uncaught error', { msg, url, line, col, stack: err && err.stack ? err.stack : null });
+};
+window.addEventListener('unhandledrejection', e => {
+  diag.error('Unhandled rejection', { reason: e.reason && e.reason.message ? e.reason.message : String(e.reason), stack: e.reason && e.reason.stack ? e.reason.stack : null });
+});
+
+diag.info('App init', diag.getDeviceInfo());
+
 const $ = id => document.getElementById(id);
 const fileInput = $('fileInput');
 const fileBtn = $('fileBtn');
@@ -460,63 +515,7 @@ function createTextBox(x, y) {
     text: '',
     fontSize: Number(textFontSize.value),
     fontColor: penColor.value,
-};
-
-/* ── Diagnostic logger ── */
-const diag = (() => {
-  const MAX = 200;
-  const logs = [];
-  const levels = { ERROR: 'E', WARN: 'W', INFO: 'I', DEBUG: 'D' };
-
-  function push(lvl, msg, data) {
-    logs.push({ ts: Date.now(), lvl, msg, data: data || null });
-    if (logs.length > MAX) logs.shift();
-  }
-
-  function log(lvl, consoleFn, args) {
-    const msg = args[0] || '';
-    const rest = args.length > 1 ? Array.from(args).slice(1) : null;
-    push(lvl, msg, rest);
-    consoleFn.apply(console, args);
-  }
-
-  return {
-    error(...args) { log(levels.ERROR, console.error, args); },
-    warn(...args)  { log(levels.WARN,  console.warn,  args); },
-    info(...args)  { log(levels.INFO,  console.info,  args); },
-    debug(...args) { log(levels.DEBUG, console.log,   args); },
-    clear() { logs.length = 0; },
-    getAll() { return logs.slice(); },
-    getText() {
-      return logs.map(e => {
-        const d = new Date(e.ts);
-        const t = d.toLocaleTimeString() + '.' + String(d.getMilliseconds()).padStart(3,'0');
-        return `[${t}][${e.lvl}] ${e.msg}${e.data ? ' ' + JSON.stringify(e.data) : ''}`;
-      }).join('\n');
-    },
-    getDeviceInfo() {
-      return {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        screen: `${screen.width}x${screen.height}`,
-        viewport: `${window.innerWidth}x${window.innerHeight}`,
-        dpr: window.devicePixelRatio || 1,
-        touchPoints: navigator.maxTouchPoints || 0,
-      };
-    },
   };
-})();
-
-window.onerror = (msg, url, line, col, err) => {
-  diag.error('Uncaught error', { msg, url, line, col, stack: err?.stack });
-};
-window.addEventListener('unhandledrejection', e => {
-  diag.error('Unhandled rejection', { reason: e.reason?.message, stack: e.reason?.stack });
-});
-
-// Log device info on init
-diag.info('App init', diag.getDeviceInfo());
   state.textBoxes.push(box);
   renderTextBoxDOM(box);
   selectTextBox(id);
