@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FirmaPDF</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
@@ -102,7 +102,7 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.4.1</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.4.2</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -268,6 +268,7 @@ async function loadFile(file) {
     emptyState.style.display = 'none';
     pdfContainer.classList.add('active');
     controls.classList.add('active');
+    lastPdfWidth = pdfContainer.clientWidth;
     await renderPage(1);
   } catch (err) {
     alert('Error al cargar el PDF: ' + err.message);
@@ -776,8 +777,14 @@ function renderTextBoxesToCanvas() {
   });
 }
 
+let lastPdfWidth = 0;
 window.addEventListener('resize', () => {
-  if (state.pdfDoc) renderPage(state.currentPage);
+  if (!state.pdfDoc) return;
+  const w = pdfContainer.clientWidth;
+  if (Math.abs(w - lastPdfWidth) > 10) {
+    lastPdfWidth = w;
+    renderPage(state.currentPage);
+  }
 });
 
 })();
