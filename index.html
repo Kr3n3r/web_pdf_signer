@@ -523,7 +523,7 @@ function createTextBox(x, y) {
   const el = document.querySelector(`.text-box[data-id="${id}"] .text-content`);
   if (el) el.focus();
   state.justCreatedTextBox = true;
-  setTimeout(() => { state.justCreatedTextBox = false; }, 300);
+  setTimeout(() => { state.justCreatedTextBox = false; }, 200);
   diag.info('Text box created', { id, x: box.x, y: box.y, w: box.w, h: box.h });
 }
 
@@ -647,7 +647,7 @@ function onTextBoxPointerDown(e) {
 }
 
 document.addEventListener('pointermove', e => {
-  const DRAG_THRESHOLD = 5;
+  const DRAG_THRESHOLD = 15;
 
   if (!state.draggingText && !state.resizingText && state.selectedTextId !== null &&
       !state.justCreatedTextBox &&
@@ -708,6 +708,11 @@ document.addEventListener('pointerup', e => {
     state.resizeDir = '';
   }
 });
+document.addEventListener('pointercancel', () => {
+  state.draggingText = false;
+  state.resizingText = false;
+  state.resizeDir = '';
+});
 
 textToggle.addEventListener('click', () => {
   state.textMode = !state.textMode;
@@ -761,6 +766,9 @@ function onPointerDown(e) {
 
   if (count === 1 && !state.pinchActive) {
     if (state.textMode) {
+      state.draggingText = false;
+      state.resizingText = false;
+      state.resizeDir = '';
       const rect = pdfWrapper.getBoundingClientRect();
       const x = (e.clientX - rect.left) / state.zoomScale;
       const y = (e.clientY - rect.top) / state.zoomScale;
