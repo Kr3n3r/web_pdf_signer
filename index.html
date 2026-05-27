@@ -226,6 +226,7 @@ const state = {
   textDragOrigW: 0,
   textDragOrigH: 0,
   textIdCounter: 0,
+  justCreatedTextBox: false,
 };
 
 /* ── Diagnostic logger ── */
@@ -521,6 +522,8 @@ function createTextBox(x, y) {
   selectTextBox(id);
   const el = document.querySelector(`.text-box[data-id="${id}"] .text-content`);
   if (el) el.focus();
+  state.justCreatedTextBox = true;
+  setTimeout(() => { state.justCreatedTextBox = false; }, 300);
   diag.info('Text box created', { id, x: box.x, y: box.y, w: box.w, h: box.h });
 }
 
@@ -618,6 +621,7 @@ function getResizeDir(el, clientX, clientY) {
 
 function onTextBoxPointerDown(e) {
   e.stopPropagation();
+  state.justCreatedTextBox = false;
   const el = e.currentTarget;
   const id = Number(el.dataset.id);
   selectTextBox(id);
@@ -638,6 +642,7 @@ function onTextBoxPointerDown(e) {
     state.textDragOrigY = box.y;
     state.textDragOrigW = box.w;
     state.textDragOrigH = box.h;
+    diag.info('Text box pointer down', { id, x: box.x, y: box.y, w: box.w, h: box.h, resize: dir || 'drag' });
   }
 }
 
@@ -645,9 +650,11 @@ document.addEventListener('pointermove', e => {
   const DRAG_THRESHOLD = 5;
 
   if (!state.draggingText && !state.resizingText && state.selectedTextId !== null &&
+      !state.justCreatedTextBox &&
       (Math.abs(e.clientX - state.textDragStartX) > DRAG_THRESHOLD ||
        Math.abs(e.clientY - state.textDragStartY) > DRAG_THRESHOLD)) {
     state.draggingText = true;
+    diag.info('Text box drag start', { id: state.selectedTextId });
   }
 
   if (state.draggingText) {
@@ -688,6 +695,14 @@ document.addEventListener('pointermove', e => {
 
 document.addEventListener('pointerup', e => {
   if (state.draggingText || state.resizingText) {
+    const box = state.textBoxes.find(b => b.id === state.selectedTextId);
+    if (box) {
+      state.textDragOrigX = box.x;
+      state.textDragOrigY = box.y;
+      state.textDragOrigW = box.w;
+      state.textDragOrigH = box.h;
+      diag.info('Text box drag/resize end', { id: state.selectedTextId, x: box.x, y: box.y, w: box.w, h: box.h });
+    }
     state.draggingText = false;
     state.resizingText = false;
     state.resizeDir = '';
