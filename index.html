@@ -140,12 +140,68 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 #saveDialog .panel .actions #saveConfirmBtn:hover{background:var(--save-btn-hover)}
 #saveDialog .panel .actions #saveCancelBtn{background:var(--btn-bg);color:var(--btn-color)}
 #saveDialog .panel .actions #saveCancelBtn:hover{background:var(--btn-hover)}
+
+/* ── Signature editor ── */
+#sigEditorModal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+#sigEditorModal.active{display:flex}
+#sigEditorModal .panel{background:var(--bg);color:var(--text);border-radius:12px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+#sigEditorModal .panel h2{margin:0;padding:16px 20px 0;font-size:16px;font-weight:600}
+#sigEditorModal .panel .body{padding:16px 20px;text-align:center}
+#sigEditorModal .panel .body canvas{border:2px dashed var(--text-box-border);border-radius:8px;touch-action:none;cursor:crosshair;display:block;margin:0 auto;background:#fff}
+#sigEditorModal .panel .sig-tools{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px}
+#sigEditorModal .panel .sig-tools label{font-size:12px;color:var(--control-label);display:flex;align-items:center;gap:6px}
+#sigEditorModal .panel .sig-tools input[type="range"]{width:60px;accent-color:var(--range-accent)}
+#sigEditorModal .panel .sig-tools input[type="color"]{width:30px;height:30px;border:2px solid var(--input-border);border-radius:6px;padding:1px;background:0 0}
+#sigEditorModal .panel .actions{display:flex;gap:8px;padding:0 20px 16px}
+#sigEditorModal .panel .actions button{flex:1;padding:10px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer}
+#sigEditorModal .panel .actions #sigEditorSaveBtn{background:var(--save-btn-bg);color:var(--save-btn-color)}
+#sigEditorModal .panel .actions #sigEditorSaveBtn:hover{background:var(--save-btn-hover)}
+#sigEditorModal .panel .actions #sigEditorCancelBtn{background:var(--btn-bg);color:var(--btn-color)}
+#sigEditorModal .panel .actions #sigEditorCancelBtn:hover{background:var(--btn-hover)}
+#sigEditorModal .panel .actions #sigEditorClearBtn{background:var(--clear-btn-bg);color:var(--clear-btn-color)}
+#sigEditorModal .panel .actions #sigEditorClearBtn:hover{background:var(--clear-btn-hover)}
+
+/* ── Signature manager ── */
+#sigManagerModal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+#sigManagerModal.active{display:flex}
+#sigManagerModal .panel{background:var(--bg);color:var(--text);border-radius:12px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+#sigManagerModal .panel h2{margin:0;padding:16px 20px 0;font-size:16px;font-weight:600}
+#sigManagerModal .panel .body{padding:16px 20px}
+#sigManagerModal .panel .sig-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--nav-border)}
+#sigManagerModal .panel .sig-item:last-child{border-bottom:none}
+#sigManagerModal .panel .sig-item img{width:100px;height:40px;object-fit:contain;border:1px solid var(--input-border);border-radius:4px;background:#fff;flex-shrink:0}
+#sigManagerModal .panel .sig-item .name{flex:1;font-size:14px;font-weight:500}
+#sigManagerModal .panel .sig-item button{padding:6px 14px;border-radius:6px;border:none;font-size:12px;font-weight:600;cursor:pointer}
+#sigManagerModal .panel .sig-item .insert-btn{background:var(--btn-bg);color:var(--btn-color)}
+#sigManagerModal .panel .sig-item .insert-btn:hover{background:var(--btn-hover)}
+#sigManagerModal .panel .sig-item .delete-btn{background:var(--clear-btn-bg);color:var(--clear-btn-color)}
+#sigManagerModal .panel .sig-item .delete-btn:hover{background:var(--clear-btn-hover)}
+#sigManagerModal .panel .empty-msg{padding:24px 0;text-align:center;color:var(--control-label);font-size:14px}
+#sigManagerModal .panel .close-area{padding:0 20px 16px;display:flex}
+#sigManagerModal .panel .close-area #sigManagerCloseBtn{flex:1;padding:10px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;background:var(--btn-bg);color:var(--btn-color)}
+#sigManagerModal .panel .close-area #sigManagerCloseBtn:hover{background:var(--btn-hover)}
+
+/* ── Placed signatures ── */
+.placed-sig{position:absolute;cursor:move;z-index:19;touch-action:none}
+.placed-sig img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;user-select:none}
+.placed-sig .pl-resize-handle{position:absolute;width:10px;height:10px;background:var(--accent);border:1px solid var(--bg);border-radius:2px;display:none;z-index:21;touch-action:none}
+.placed-sig.selected .pl-resize-handle{display:block}
+.placed-sig .pl-resize-handle.nw{top:-5px;left:-5px;cursor:nw-resize}
+.placed-sig .pl-resize-handle.n{top:-5px;left:50%;margin-left:-5px;cursor:n-resize}
+.placed-sig .pl-resize-handle.ne{top:-5px;right:-5px;cursor:ne-resize}
+.placed-sig .pl-resize-handle.w{top:50%;margin-top:-5px;left:-5px;cursor:w-resize}
+.placed-sig .pl-resize-handle.e{top:50%;margin-top:-5px;right:-5px;cursor:e-resize}
+.placed-sig .pl-resize-handle.sw{bottom:-5px;left:-5px;cursor:sw-resize}
+.placed-sig .pl-resize-handle.s{bottom:-5px;left:50%;margin-left:-5px;cursor:s-resize}
+.placed-sig .pl-resize-handle.se{bottom:-5px;right:-5px;cursor:se-resize}
+.placed-sig .pl-delete{position:absolute;top:-30px;right:0;width:24px;height:24px;background:var(--accent);color:#fff;border:none;border-radius:4px;font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:23}
+.placed-sig.selected .pl-delete{display:flex}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.5.3</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.5.4</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -177,6 +233,8 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
     <label>T <input type="number" id="textFontSize" min="8" max="72" value="16"></label>
     <div class="btn-group">
       <button id="textToggle">T</button>
+      <button id="saveSigBtn">✍️</button>
+      <button id="sigManagerBtn">📋</button>
       <button id="undoBtn" disabled>↶ Deshacer</button>
       <button id="clearBtn">✕ Limpiar</button>
       <button id="saveBtn">💾 Guardar PDF</button>
@@ -209,6 +267,34 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
     <div class="actions">
       <button id="saveCancelBtn">Cancelar</button>
       <button id="saveConfirmBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="sigEditorModal">
+  <div class="panel">
+    <h2>✍️ Dibujar firma</h2>
+    <div class="body">
+      <canvas id="sigCanvas" width="300" height="120"></canvas>
+      <div class="sig-tools">
+        <label>🎨 <input type="color" id="sigPenColor" value="#000000"></label>
+        <label>─ <input type="range" id="sigPenWidth" min="1" max="8" value="2"></label>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="sigEditorClearBtn">🗑 Limpiar</button>
+      <button id="sigEditorCancelBtn">Cancelar</button>
+      <button id="sigEditorSaveBtn">💾 Guardar firma</button>
+    </div>
+  </div>
+</div>
+
+<div id="sigManagerModal">
+  <div class="panel">
+    <h2>📋 Firmas guardadas</h2>
+    <div class="body" id="sigManagerBody"></div>
+    <div class="close-area">
+      <button id="sigManagerCloseBtn">Cerrar</button>
     </div>
   </div>
 </div>
@@ -258,6 +344,19 @@ const state = {
   textIdCounter: 0,
   justCreatedTextBox: false,
   textPointerDown: false,
+  savedSignatures: [],
+  placements: [],
+  selectedPlacementId: null,
+  draggingPlacement: false,
+  resizingPlacement: false,
+  plResizeDir: '',
+  plDragStartX: 0,
+  plDragStartY: 0,
+  plDragOrigX: 0,
+  plDragOrigY: 0,
+  plDragOrigW: 0,
+  plDragOrigH: 0,
+  plIdCounter: 0,
 };
 
 /* ── Diagnostic logger ── */
@@ -336,6 +435,8 @@ const clearBtn = $('clearBtn');
 const saveBtn = $('saveBtn');
 const themeToggle = $('themeToggle');
 const textToggle = $('textToggle');
+const saveSigBtn = $('saveSigBtn');
+const sigManagerBtn = $('sigManagerBtn');
 
 let pdfCtx = pdfCanvas.getContext('2d');
 let drawCtx = drawCanvas.getContext('2d');
@@ -438,6 +539,7 @@ async function renderPage(num) {
     undoBtn.disabled = true;
     resetZoom();
     removeAllTextBoxes();
+    removeAllPlacements();
     const hiResViewport = page.getViewport({ scale: fitScale * dpr });
     const renderTask = page.render({ canvasContext: pdfCtx, viewport: hiResViewport });
     await renderTask.promise;
@@ -527,6 +629,7 @@ function setTheme(theme) {
 }
 const savedTheme = localStorage.getItem('theme') || 'light';
 setTheme(savedTheme);
+loadSavedSignatures();
 themeToggle.addEventListener('click', () => {
   const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   setTheme(next);
@@ -689,6 +792,13 @@ document.addEventListener('pointermove', e => {
     diag.info('Text box drag start', { id: state.selectedTextId });
   }
 
+  if (!state.draggingPlacement && !state.resizingPlacement && state.selectedPlacementId !== null &&
+      (Math.abs(e.clientX - state.plDragStartX) > DRAG_THRESHOLD ||
+       Math.abs(e.clientY - state.plDragStartY) > DRAG_THRESHOLD)) {
+    state.draggingPlacement = true;
+    diag.info('Placement drag start', { id: state.selectedPlacementId });
+  }
+
   if (state.draggingText) {
     const box = state.textBoxes.find(b => b.id === state.selectedTextId);
     if (!box) return;
@@ -723,6 +833,36 @@ document.addEventListener('pointermove', e => {
       el.style.height = nh + 'px';
     }
   }
+
+  if (state.draggingPlacement) {
+    const pl = state.placements.find(p => p.id === state.selectedPlacementId);
+    if (!pl) return;
+    const dx = (e.clientX - state.plDragStartX) / state.zoomScale;
+    const dy = (e.clientY - state.plDragStartY) / state.zoomScale;
+    pl.x = Math.max(0, state.plDragOrigX + dx);
+    pl.y = Math.max(0, state.plDragOrigY + dy);
+    const el = document.querySelector(`.placed-sig[data-id="${pl.id}"]`);
+    if (el) { el.style.left = pl.x + 'px'; el.style.top = pl.y + 'px'; }
+  }
+  if (state.resizingPlacement) {
+    const pl = state.placements.find(p => p.id === state.selectedPlacementId);
+    if (!pl) return;
+    const dx = (e.clientX - state.plDragStartX) / state.zoomScale;
+    const dy = (e.clientY - state.plDragStartY) / state.zoomScale;
+    const d = state.plResizeDir;
+    let nx = state.plDragOrigX, ny = state.plDragOrigY;
+    let nw = state.plDragOrigW, nh = state.plDragOrigH;
+    if (d.includes('e')) nw = Math.max(30, state.plDragOrigW + dx);
+    if (d.includes('w')) { nw = Math.max(30, state.plDragOrigW - dx); nx = state.plDragOrigX + (state.plDragOrigW - nw); }
+    if (d.includes('s')) nh = Math.max(20, state.plDragOrigH + dy);
+    if (d.includes('n')) { nh = Math.max(20, state.plDragOrigH - dy); ny = state.plDragOrigY + (state.plDragOrigH - nh); }
+    pl.x = nx; pl.y = ny; pl.w = nw; pl.h = nh;
+    const el = document.querySelector(`.placed-sig[data-id="${pl.id}"]`);
+    if (el) {
+      el.style.left = nx + 'px'; el.style.top = ny + 'px';
+      el.style.width = nw + 'px'; el.style.height = nh + 'px';
+    }
+  }
 });
 
 document.addEventListener('pointerup', e => {
@@ -740,12 +880,28 @@ document.addEventListener('pointerup', e => {
     state.resizeDir = '';
     state.textPointerDown = false;
   }
+  if (state.draggingPlacement || state.resizingPlacement) {
+    const pl = state.placements.find(p => p.id === state.selectedPlacementId);
+    if (pl) {
+      state.plDragOrigX = pl.x;
+      state.plDragOrigY = pl.y;
+      state.plDragOrigW = pl.w;
+      state.plDragOrigH = pl.h;
+      diag.info('Placement drag/resize end', { id: state.selectedPlacementId, x: pl.x, y: pl.y, w: pl.w, h: pl.h });
+    }
+    state.draggingPlacement = false;
+    state.resizingPlacement = false;
+    state.plResizeDir = '';
+  }
 });
 document.addEventListener('pointercancel', () => {
   state.draggingText = false;
   state.resizingText = false;
   state.resizeDir = '';
   state.textPointerDown = false;
+  state.draggingPlacement = false;
+  state.resizingPlacement = false;
+  state.plResizeDir = '';
 });
 
 textToggle.addEventListener('click', () => {
@@ -753,6 +909,7 @@ textToggle.addEventListener('click', () => {
   textToggle.classList.toggle('active', state.textMode);
   drawCanvas.style.cursor = state.textMode ? 'text' : 'crosshair';
   if (!state.textMode) selectTextBox(null);
+  if (state.textMode) selectPlacement(null);
   diag.info('Text mode toggled', { on: state.textMode });
 });
 
@@ -800,6 +957,7 @@ function onPointerDown(e) {
 
   if (count === 1 && !state.pinchActive) {
     if (state.textMode) {
+      selectPlacement(null);
       state.textPointerDown = false;
       state.draggingText = false;
       state.resizingText = false;
@@ -809,6 +967,7 @@ function onPointerDown(e) {
       const y = (e.clientY - rect.top) / state.zoomScale;
       createTextBox(x, y);
     } else {
+      selectPlacement(null);
       startDraw(e);
     }
   }
@@ -881,6 +1040,7 @@ clearBtn.addEventListener('click', () => {
   state.hasDrawn = false;
   undoBtn.disabled = true;
   removeAllTextBoxes();
+  removeAllPlacements();
   diag.info('Canvas cleared');
 });
 
@@ -891,9 +1051,10 @@ saveBtn.addEventListener('click', savePDF);
 async function savePDF() {
   if (!state.file || !state.pdfDoc) return;
   showLoading(true);
-  diag.info('Save started', { page: state.currentPage, textBoxes: state.textBoxes.length });
+  diag.info('Save started', { page: state.currentPage, textBoxes: state.textBoxes.length, placements: state.placements.length });
   try {
     if (state.textBoxes.length > 0) renderTextBoxesToCanvas();
+    if (state.placements.length > 0) renderPlacementsToCanvas();
     const origBytes = await state.file.arrayBuffer();
     const pdfDoc = await PDFLib.PDFDocument.load(origBytes);
     const pages = pdfDoc.getPages();
@@ -975,6 +1136,229 @@ saveDialog.addEventListener('click', e => {
   if (e.target === saveDialog) saveCancelBtn.click();
 });
 
+/* ── Signature system ── */
+const sigCanvas = $('sigCanvas');
+const sigPenColor = $('sigPenColor');
+const sigPenWidth = $('sigPenWidth');
+const sigCtx = sigCanvas.getContext('2d');
+const sigEditorModal = $('sigEditorModal');
+const sigEditorSaveBtn = $('sigEditorSaveBtn');
+const sigEditorCancelBtn = $('sigEditorCancelBtn');
+const sigEditorClearBtn = $('sigEditorClearBtn');
+const sigManagerModal = $('sigManagerModal');
+const sigManagerBody = $('sigManagerBody');
+const sigManagerCloseBtn = $('sigManagerCloseBtn');
+let _sigDrawing = false;
+let _sigLastX = 0;
+let _sigLastY = 0;
+
+function loadSavedSignatures() {
+  try {
+    const data = localStorage.getItem('savedSignatures');
+    state.savedSignatures = data ? JSON.parse(data) : [];
+  } catch { state.savedSignatures = []; }
+}
+function saveSignaturesToStorage() {
+  localStorage.setItem('savedSignatures', JSON.stringify(state.savedSignatures));
+}
+
+sigCtx.strokeStyle = '#000';
+sigCtx.lineWidth = 2;
+sigCtx.lineCap = 'round';
+sigCtx.lineJoin = 'round';
+
+sigPenColor.addEventListener('input', () => { sigCtx.strokeStyle = sigPenColor.value; });
+sigPenWidth.addEventListener('input', () => { sigCtx.lineWidth = Number(sigPenWidth.value); });
+
+function sigStart(e) {
+  e.preventDefault(); _sigDrawing = true;
+  const r = sigCanvas.getBoundingClientRect();
+  _sigLastX = e.clientX - r.left; _sigLastY = e.clientY - r.top;
+  sigCtx.beginPath(); sigCtx.moveTo(_sigLastX, _sigLastY);
+}
+function sigMove(e) {
+  if (!_sigDrawing) return; e.preventDefault();
+  const r = sigCanvas.getBoundingClientRect();
+  const x = e.clientX - r.left; const y = e.clientY - r.top;
+  sigCtx.beginPath(); sigCtx.moveTo(_sigLastX, _sigLastY);
+  sigCtx.lineTo(x, y); sigCtx.stroke();
+  _sigLastX = x; _sigLastY = y;
+}
+function sigEnd() { _sigDrawing = false; }
+sigCanvas.addEventListener('pointerdown', sigStart);
+sigCanvas.addEventListener('pointermove', sigMove);
+sigCanvas.addEventListener('pointerup', sigEnd);
+sigCanvas.addEventListener('pointercancel', sigEnd);
+sigCanvas.addEventListener('pointerleave', sigEnd);
+
+function clearSigCanvas() {
+  sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+}
+
+sigEditorClearBtn.addEventListener('click', clearSigCanvas);
+
+sigEditorCancelBtn.addEventListener('click', () => {
+  sigEditorModal.classList.remove('active');
+  clearSigCanvas();
+});
+sigEditorModal.addEventListener('click', e => {
+  if (e.target === sigEditorModal) { sigEditorModal.classList.remove('active'); clearSigCanvas(); }
+});
+
+sigEditorSaveBtn.addEventListener('click', () => {
+  const dataUrl = sigCanvas.toDataURL('image/png');
+  const num = state.savedSignatures.length + 1;
+  const sig = { id: Date.now(), name: 'Firma ' + num, dataUrl, width: sigCanvas.width, height: sigCanvas.height };
+  state.savedSignatures.push(sig);
+  saveSignaturesToStorage();
+  sigEditorModal.classList.remove('active');
+  clearSigCanvas();
+  showToast('Firma guardada como "' + sig.name + '" ✓');
+});
+
+saveSigBtn.addEventListener('click', () => {
+  if (!state.file) { showToast('Abre un PDF primero'); return; }
+  sigEditorModal.classList.add('active');
+});
+
+function openSigManager() {
+  sigManagerBody.innerHTML = '';
+  if (state.savedSignatures.length === 0) {
+    sigManagerBody.innerHTML = '<div class="empty-msg">No hay firmas guardadas</div>';
+  } else {
+    state.savedSignatures.forEach(sig => {
+      const item = document.createElement('div');
+      item.className = 'sig-item';
+      const img = document.createElement('img');
+      img.src = sig.dataUrl; img.alt = sig.name;
+      const name = document.createElement('div');
+      name.className = 'name'; name.textContent = sig.name;
+      const insBtn = document.createElement('button');
+      insBtn.className = 'insert-btn'; insBtn.textContent = 'Insertar';
+      insBtn.addEventListener('click', () => { insertSignature(sig.id); sigManagerModal.classList.remove('active'); });
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn'; delBtn.textContent = 'Eliminar';
+      delBtn.addEventListener('click', () => { deleteSavedSignature(sig.id); openSigManager(); });
+      item.appendChild(img); item.appendChild(name); item.appendChild(insBtn); item.appendChild(delBtn);
+      sigManagerBody.appendChild(item);
+    });
+  }
+  sigManagerModal.classList.add('active');
+}
+
+sigManagerBtn.addEventListener('click', () => {
+  if (!state.file) { showToast('Abre un PDF primero'); return; }
+  openSigManager();
+});
+sigManagerCloseBtn.addEventListener('click', () => sigManagerModal.classList.remove('active'));
+sigManagerModal.addEventListener('click', e => {
+  if (e.target === sigManagerModal) sigManagerModal.classList.remove('active');
+});
+
+function deleteSavedSignature(id) {
+  state.placements = state.placements.filter(p => p.sigId !== id);
+  document.querySelectorAll('.placed-sig').forEach(el => {
+    const pid = Number(el.dataset.id);
+    if (!state.placements.find(p => p.id === pid)) el.remove();
+  });
+  state.savedSignatures = state.savedSignatures.filter(s => s.id !== id);
+  saveSignaturesToStorage();
+  showToast('Firma eliminada');
+}
+
+function insertSignature(sigId) {
+  const sig = state.savedSignatures.find(s => s.id === sigId);
+  if (!sig) return;
+  const id = ++state.plIdCounter;
+  const w = 120; const h = 40;
+  const pw = pdfWrapper.getBoundingClientRect().width || 400;
+  const pl = { id, sigId, x: (pw - w) / 2, y: 20, w, h };
+  state.placements.push(pl);
+  createPlacementDOM(pl);
+  diag.info('Signature inserted', { id, sigId, x: pl.x, y: pl.y });
+}
+
+function createPlacementDOM(pl) {
+  const sig = state.savedSignatures.find(s => s.id === pl.sigId);
+  if (!sig) return;
+  const el = document.createElement('div');
+  el.className = 'placed-sig'; el.dataset.id = pl.id;
+  el.style.left = pl.x + 'px'; el.style.top = pl.y + 'px';
+  el.style.width = pl.w + 'px'; el.style.height = pl.h + 'px';
+  const img = document.createElement('img');
+  img.src = sig.dataUrl; img.alt = sig.name; img.draggable = false;
+  el.appendChild(img);
+  const dirs = ['nw','n','ne','w','e','sw','s','se'];
+  dirs.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'pl-resize-handle ' + d; el.appendChild(h);
+  });
+  const del = document.createElement('button');
+  del.className = 'pl-delete'; del.textContent = '✕'; el.appendChild(del);
+  pdfWrapper.appendChild(el);
+  el.addEventListener('pointerdown', onPlacementPointerDown);
+  del.addEventListener('pointerdown', e => { e.stopPropagation(); removePlacement(pl.id); });
+}
+
+function selectPlacement(id) {
+  document.querySelectorAll('.placed-sig').forEach(el => el.classList.remove('selected'));
+  state.selectedPlacementId = id;
+  if (id !== null) {
+    const el = document.querySelector(`.placed-sig[data-id="${id}"]`);
+    if (el) el.classList.add('selected');
+  }
+}
+
+function removePlacement(id) {
+  const el = document.querySelector(`.placed-sig[data-id="${id}"]`);
+  if (el) el.remove();
+  state.placements = state.placements.filter(p => p.id !== id);
+  if (state.selectedPlacementId === id) state.selectedPlacementId = null;
+}
+
+function removeAllPlacements() {
+  document.querySelectorAll('.placed-sig').forEach(el => el.remove());
+  const count = state.placements.length;
+  state.placements = [];
+  state.selectedPlacementId = null;
+  if (count > 0) diag.info('All placements removed', { count });
+}
+
+function getPlacementResizeDir(el, clientX, clientY) {
+  const r = el.getBoundingClientRect();
+  const margin = 12;
+  const dirs = [];
+  if (clientY - r.top <= margin) dirs.push('n');
+  if (r.bottom - clientY <= margin) dirs.push('s');
+  if (clientX - r.left <= margin) dirs.push('w');
+  if (r.right - clientX <= margin) dirs.push('e');
+  return dirs.join('');
+}
+
+function onPlacementPointerDown(e) {
+  e.stopPropagation();
+  const el = e.currentTarget;
+  const id = Number(el.dataset.id);
+  selectPlacement(id);
+  state.plDragStartX = e.clientX;
+  state.plDragStartY = e.clientY;
+  state.plResizeDir = '';
+  const dir = getPlacementResizeDir(el, e.clientX, e.clientY);
+  if (dir) { state.resizingPlacement = true; state.plResizeDir = dir; }
+  const pl = state.placements.find(p => p.id === id);
+  if (pl) {
+    state.plDragOrigX = pl.x; state.plDragOrigY = pl.y;
+    state.plDragOrigW = pl.w; state.plDragOrigH = pl.h;
+  }
+}
+
+function renderPlacementsToCanvas() {
+  state.placements.forEach(pl => {
+    const el = document.querySelector(`.placed-sig[data-id="${pl.id}"] img`);
+    if (el) drawCtx.drawImage(el, pl.x, pl.y, pl.w, pl.h);
+  });
+}
+
 function renderTextBoxesToCanvas() {
   state.textBoxes.forEach(box => {
     drawCtx.font = box.fontSize + 'px sans-serif';
@@ -1033,7 +1417,7 @@ diagClearBtn.addEventListener('click', () => { diag.clear(); diagRenderLogs(); }
 diagCopyBtn.addEventListener('click', () => {
   const info = diag.getDeviceInfo();
   const header =
-    `## Diagnóstico FirmaPDF v1.5.3\n` +
+    `## Diagnóstico FirmaPDF v1.5.4\n` +
     `- Fecha: ${new Date().toISOString()}\n` +
     `- User-Agent: ${info.userAgent}\n` +
     `- Plataforma: ${info.platform}\n` +
