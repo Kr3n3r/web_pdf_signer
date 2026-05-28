@@ -124,12 +124,28 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 #diagModal .panel .close-area #diagCopyBtn:hover{background:var(--btn-hover)}
 #diagModal .panel .close-area #diagCloseBtn{background:var(--clear-btn-bg);color:var(--clear-btn-color)}
 #diagModal .panel .close-area #diagCloseBtn:hover{background:var(--clear-btn-hover)}
+
+/* ── Save dialog ── */
+#saveDialog{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:none;align-items:center;justify-content:center;padding:16px}
+#saveDialog.active{display:flex}
+#saveDialog .panel{background:var(--bg);color:var(--text);border-radius:12px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+#saveDialog .panel h2{margin:0;padding:16px 20px 0;font-size:16px;font-weight:600}
+#saveDialog .panel .body{padding:16px 20px}
+#saveDialog .panel .body label{display:block;font-size:13px;color:var(--control-label);margin-bottom:6px}
+#saveDialog .panel .body input{width:100%;padding:10px 12px;border:2px solid var(--input-border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);outline:none;box-sizing:border-box}
+#saveDialog .panel .body input:focus{border-color:var(--accent)}
+#saveDialog .panel .actions{display:flex;gap:8px;padding:0 20px 16px}
+#saveDialog .panel .actions button{flex:1;padding:10px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer}
+#saveDialog .panel .actions #saveConfirmBtn{background:var(--save-btn-bg);color:var(--save-btn-color)}
+#saveDialog .panel .actions #saveConfirmBtn:hover{background:var(--save-btn-hover)}
+#saveDialog .panel .actions #saveCancelBtn{background:var(--btn-bg);color:var(--btn-color)}
+#saveDialog .panel .actions #saveCancelBtn:hover{background:var(--btn-hover)}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.5.2</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.5.3</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -179,6 +195,20 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
     <div class="close-area">
       <button id="diagCopyBtn">📋 Copiar diagnóstico</button>
       <button id="diagCloseBtn">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="saveDialog">
+  <div class="panel">
+    <h2>💾 Guardar PDF</h2>
+    <div class="body">
+      <label for="saveFileName">Nombre del archivo</label>
+      <input type="text" id="saveFileName" spellcheck="false">
+    </div>
+    <div class="actions">
+      <button id="saveCancelBtn">Cancelar</button>
+      <button id="saveConfirmBtn">Guardar</button>
     </div>
   </div>
 </div>
@@ -885,16 +915,7 @@ async function savePDF() {
     const outBytes = await pdfDoc.save();
     const blob = new Blob([outBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'firmado_' + state.file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-    saveBtn.classList.add('pulse');
-    setTimeout(() => saveBtn.classList.remove('pulse'), 500);
-    showToast('PDF guardado con éxito ✓');
+    showSaveDialog(url, 'firmado_' + state.file.name);
     diag.info('Save success', { fileName: 'firmado_' + state.file.name });
   } catch (err) {
     alert('Error al guardar: ' + err.message);
@@ -904,6 +925,55 @@ async function savePDF() {
     showLoading(false);
   }
 }
+
+/* ── Save file dialog ── */
+const saveDialog = $('saveDialog');
+const saveFileNameInput = $('saveFileName');
+const saveConfirmBtn = $('saveConfirmBtn');
+const saveCancelBtn = $('saveCancelBtn');
+let _saveUrl = '';
+let _saveResolve = null;
+
+function showSaveDialog(url, proposedName) {
+  _saveUrl = url;
+  saveFileNameInput.value = proposedName;
+  saveDialog.classList.add('active');
+  saveFileNameInput.focus();
+  saveFileNameInput.select();
+  return new Promise(resolve => { _saveResolve = resolve; });
+}
+
+saveConfirmBtn.addEventListener('click', () => {
+  const name = saveFileNameInput.value.trim();
+  if (!name) return;
+  saveDialog.classList.remove('active');
+  const a = document.createElement('a');
+  a.href = _saveUrl;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(_saveUrl), 5000);
+  saveBtn.classList.add('pulse');
+  setTimeout(() => saveBtn.classList.remove('pulse'), 500);
+  showToast('PDF guardado con éxito ✓');
+  if (_saveResolve) _saveResolve(name);
+});
+
+saveCancelBtn.addEventListener('click', () => {
+  saveDialog.classList.remove('active');
+  setTimeout(() => URL.revokeObjectURL(_saveUrl), 1000);
+  if (_saveResolve) _saveResolve(null);
+});
+
+saveFileNameInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveConfirmBtn.click();
+  if (e.key === 'Escape') saveCancelBtn.click();
+});
+
+saveDialog.addEventListener('click', e => {
+  if (e.target === saveDialog) saveCancelBtn.click();
+});
 
 function renderTextBoxesToCanvas() {
   state.textBoxes.forEach(box => {
@@ -963,7 +1033,7 @@ diagClearBtn.addEventListener('click', () => { diag.clear(); diagRenderLogs(); }
 diagCopyBtn.addEventListener('click', () => {
   const info = diag.getDeviceInfo();
   const header =
-    `## Diagnóstico FirmaPDF v1.5.2\n` +
+    `## Diagnóstico FirmaPDF v1.5.3\n` +
     `- Fecha: ${new Date().toISOString()}\n` +
     `- User-Agent: ${info.userAgent}\n` +
     `- Plataforma: ${info.platform}\n` +
