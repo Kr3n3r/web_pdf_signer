@@ -201,7 +201,7 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.5.4</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.5.5</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -357,6 +357,7 @@ const state = {
   plDragOrigW: 0,
   plDragOrigH: 0,
   plIdCounter: 0,
+  placementPointerDown: false,
 };
 
 /* ── Diagnostic logger ── */
@@ -793,6 +794,7 @@ document.addEventListener('pointermove', e => {
   }
 
   if (!state.draggingPlacement && !state.resizingPlacement && state.selectedPlacementId !== null &&
+      state.placementPointerDown &&
       (Math.abs(e.clientX - state.plDragStartX) > DRAG_THRESHOLD ||
        Math.abs(e.clientY - state.plDragStartY) > DRAG_THRESHOLD)) {
     state.draggingPlacement = true;
@@ -892,6 +894,7 @@ document.addEventListener('pointerup', e => {
     state.draggingPlacement = false;
     state.resizingPlacement = false;
     state.plResizeDir = '';
+    state.placementPointerDown = false;
   }
 });
 document.addEventListener('pointercancel', () => {
@@ -902,6 +905,7 @@ document.addEventListener('pointercancel', () => {
   state.draggingPlacement = false;
   state.resizingPlacement = false;
   state.plResizeDir = '';
+  state.placementPointerDown = false;
 });
 
 textToggle.addEventListener('click', () => {
@@ -1337,6 +1341,7 @@ function getPlacementResizeDir(el, clientX, clientY) {
 
 function onPlacementPointerDown(e) {
   e.stopPropagation();
+  state.placementPointerDown = true;
   const el = e.currentTarget;
   const id = Number(el.dataset.id);
   selectPlacement(id);
@@ -1417,7 +1422,7 @@ diagClearBtn.addEventListener('click', () => { diag.clear(); diagRenderLogs(); }
 diagCopyBtn.addEventListener('click', () => {
   const info = diag.getDeviceInfo();
   const header =
-    `## Diagnóstico FirmaPDF v1.5.4\n` +
+    `## Diagnóstico FirmaPDF v1.5.5\n` +
     `- Fecha: ${new Date().toISOString()}\n` +
     `- User-Agent: ${info.userAgent}\n` +
     `- Plataforma: ${info.platform}\n` +
