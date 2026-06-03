@@ -201,7 +201,7 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 <body>
 
 <header>
-  <h1>✎ FirmaPDF <span id="version">1.5.5</span></h1>
+  <h1>✎ FirmaPDF <span id="version">1.6.0</span></h1>
   <div class="spacer"></div>
   <button id="themeToggle">🌙</button>
   <button id="fileBtn">📄 Seleccionar PDF</button>
@@ -230,7 +230,6 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
   <div id="controls">
     <label>🎨 <input type="color" id="penColor" value="#000000"></label>
     <label>─ <input type="range" id="penWidth" min="1" max="12" value="3"></label>
-    <label>T <input type="number" id="textFontSize" min="8" max="72" value="16"></label>
     <div class="btn-group">
       <button id="textToggle">T</button>
       <button id="saveSigBtn">✍️</button>
@@ -275,16 +274,19 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
   <div class="panel">
     <h2>✍️ Dibujar firma</h2>
     <div class="body">
-      <canvas id="sigCanvas" width="300" height="120"></canvas>
+      <canvas id="sigCanvas" width="500" height="200"></canvas>
       <div class="sig-tools">
         <label>🎨 <input type="color" id="sigPenColor" value="#000000"></label>
         <label>─ <input type="range" id="sigPenWidth" min="1" max="8" value="2"></label>
+      </div>
+      <div style="margin-top:10px">
+        <input type="text" id="sigTextInput" placeholder="Texto opcional para la firma..." style="width:100%;padding:10px 12px;border:2px solid var(--input-border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);box-sizing:border-box;outline:none">
       </div>
     </div>
     <div class="actions">
       <button id="sigEditorClearBtn">🗑 Limpiar</button>
       <button id="sigEditorCancelBtn">Cancelar</button>
-      <button id="sigEditorSaveBtn">💾 Guardar firma</button>
+      <button id="sigEditorSaveBtn">💾 Guardar</button>
     </div>
   </div>
 </div>
@@ -430,7 +432,6 @@ const emptyState = $('emptyState');
 const loading = $('loading');
 const penColor = $('penColor');
 const penWidth = $('penWidth');
-const textFontSize = $('textFontSize');
 const undoBtn = $('undoBtn');
 const clearBtn = $('clearBtn');
 const saveBtn = $('saveBtn');
@@ -640,6 +641,28 @@ themeToggle.addEventListener('click', () => {
 });
 
 /* ── Text tool ── */
+function autoFitText(box, el) {
+  const padding = 12;
+  const maxW = Math.max(20, box.w - padding);
+  const maxH = Math.max(20, box.h - padding);
+  const text = el.textContent || '';
+  if (!text) { box.fontSize = 16; el.style.fontSize = '16px'; return; }
+  const lines = text.split('\n');
+  const tc = document.createElement('canvas').getContext('2d');
+  let fs = Math.min(72, Math.max(8, Math.floor(maxW / 2)));
+  while (fs > 8) {
+    tc.font = fs + 'px sans-serif';
+    const lh = fs * 1.3;
+    if (lines.length * lh > maxH) { fs -= 2; continue; }
+    let ok = true;
+    for (const l of lines) { if (tc.measureText(l).width > maxW) { ok = false; break; } }
+    if (ok) break;
+    fs -= 2;
+  }
+  box.fontSize = fs;
+  el.style.fontSize = fs + 'px';
+}
+
 function createTextBox(x, y) {
   const id = ++state.textIdCounter;
   const box = {
@@ -649,7 +672,7 @@ function createTextBox(x, y) {
     w: 160,
     h: 40,
     text: '',
-    fontSize: Number(textFontSize.value),
+    fontSize: 72,
     fontColor: penColor.value,
   };
   state.textBoxes.push(box);
@@ -697,7 +720,9 @@ function renderTextBoxDOM(box) {
 
   content.addEventListener('input', () => {
     const b = state.textBoxes.find(bx => bx.id === box.id);
-    if (b) b.text = content.textContent || '';
+    if (!b) return;
+    b.text = content.textContent || '';
+    autoFitText(b, content);
   });
 
   el.addEventListener('pointerdown', onTextBoxPointerDown);
@@ -875,6 +900,10 @@ document.addEventListener('pointerup', e => {
       state.textDragOrigY = box.y;
       state.textDragOrigW = box.w;
       state.textDragOrigH = box.h;
+      if (state.resizingText) {
+        const el = document.querySelector(`.text-box[data-id="${box.id}"] .text-content`);
+        if (el) autoFitText(box, el);
+      }
       diag.info('Text box drag/resize end', { id: state.selectedTextId, x: box.x, y: box.y, w: box.w, h: box.h });
     }
     state.draggingText = false;
@@ -1069,8 +1098,12 @@ async function savePDF() {
     const pngBytes = await pngBlob.arrayBuffer();
     const pngImg = await pdfDoc.embedPng(pngBytes);
     const dpr = window.devicePixelRatio || 1;
-    const imgW = (drawCanvas.width / dpr) / state.scale;
-    const imgH = (drawCanvas.height / dpr) / state.scale;
+    let imgW = (drawCanvas.width / dpr) / state.scale;
+    let imgH = (drawCanvas.height / dpr) / state.scale;
+    const rotation = targetPage.getRotation().angle;
+    if (rotation === 90 || rotation === 270) {
+      const tmp = imgW; imgW = imgH; imgH = tmp;
+    }
     targetPage.drawImage(pngImg, {
       x: 0,
       y: pgH - imgH,
@@ -1152,6 +1185,7 @@ const sigEditorClearBtn = $('sigEditorClearBtn');
 const sigManagerModal = $('sigManagerModal');
 const sigManagerBody = $('sigManagerBody');
 const sigManagerCloseBtn = $('sigManagerCloseBtn');
+const sigTextInput = $('sigTextInput');
 let _sigDrawing = false;
 let _sigLastX = 0;
 let _sigLastY = 0;
@@ -1204,12 +1238,31 @@ sigEditorClearBtn.addEventListener('click', clearSigCanvas);
 sigEditorCancelBtn.addEventListener('click', () => {
   sigEditorModal.classList.remove('active');
   clearSigCanvas();
+  sigTextInput.value = '';
 });
 sigEditorModal.addEventListener('click', e => {
-  if (e.target === sigEditorModal) { sigEditorModal.classList.remove('active'); clearSigCanvas(); }
+  if (e.target === sigEditorModal) { sigEditorModal.classList.remove('active'); clearSigCanvas(); sigTextInput.value = ''; }
 });
 
 sigEditorSaveBtn.addEventListener('click', () => {
+  const text = sigTextInput.value.trim();
+  if (text) {
+    sigCtx.save();
+    let fontSize = 18;
+    const maxW = sigCanvas.width - 24;
+    const tempCtx = document.createElement('canvas').getContext('2d');
+    while (fontSize > 8) {
+      tempCtx.font = 'bold ' + fontSize + 'px sans-serif';
+      if (tempCtx.measureText(text).width <= maxW) break;
+      fontSize -= 2;
+    }
+    sigCtx.font = 'bold ' + fontSize + 'px sans-serif';
+    sigCtx.fillStyle = sigPenColor.value;
+    sigCtx.textAlign = 'center';
+    sigCtx.textBaseline = 'bottom';
+    sigCtx.fillText(text, sigCanvas.width / 2, sigCanvas.height - 6);
+    sigCtx.restore();
+  }
   const dataUrl = sigCanvas.toDataURL('image/png');
   const num = state.savedSignatures.length + 1;
   const sig = { id: Date.now(), name: 'Firma ' + num, dataUrl, width: sigCanvas.width, height: sigCanvas.height };
@@ -1217,6 +1270,7 @@ sigEditorSaveBtn.addEventListener('click', () => {
   saveSignaturesToStorage();
   sigEditorModal.classList.remove('active');
   clearSigCanvas();
+  sigTextInput.value = '';
   showToast('Firma guardada como "' + sig.name + '" ✓');
 });
 
@@ -1422,7 +1476,7 @@ diagClearBtn.addEventListener('click', () => { diag.clear(); diagRenderLogs(); }
 diagCopyBtn.addEventListener('click', () => {
   const info = diag.getDeviceInfo();
   const header =
-    `## Diagnóstico FirmaPDF v1.5.5\n` +
+    `## Diagnóstico FirmaPDF v1.6.0\n` +
     `- Fecha: ${new Date().toISOString()}\n` +
     `- User-Agent: ${info.userAgent}\n` +
     `- Plataforma: ${info.platform}\n` +
