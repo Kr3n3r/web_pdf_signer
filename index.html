@@ -144,17 +144,14 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 /* ── Signature editor ── */
 #sigEditorModal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
 #sigEditorModal.active{display:flex}
-#sigEditorModal .panel{background:var(--bg);color:var(--text);border-radius:12px;width:100%;max-width:650px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+#sigEditorModal .panel{background:var(--bg);color:var(--text);border-radius:12px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
 #sigEditorModal .panel h2{margin:0;padding:16px 20px 0;font-size:16px;font-weight:600}
 #sigEditorModal .panel .body{padding:16px 20px;text-align:center}
-#sigEditorModal .panel .sig-canvas-wrap{position:relative;border:2px dashed var(--text-box-border);border-radius:8px;overflow:hidden;background:#fff}
-#sigEditorModal .panel .sig-canvas-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:3/1;touch-action:none;cursor:crosshair}
-#sigEditorModal .panel .sig-tools{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px;flex-wrap:wrap}
+#sigEditorModal .panel .body canvas{border:2px dashed var(--text-box-border);border-radius:8px;touch-action:none;cursor:crosshair;display:block;margin:0 auto;background:#fff}
+#sigEditorModal .panel .sig-tools{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px}
 #sigEditorModal .panel .sig-tools label{font-size:12px;color:var(--control-label);display:flex;align-items:center;gap:6px}
 #sigEditorModal .panel .sig-tools input[type="range"]{width:60px;accent-color:var(--range-accent)}
 #sigEditorModal .panel .sig-tools input[type="color"]{width:30px;height:30px;border:2px solid var(--input-border);border-radius:6px;padding:1px;background:0 0}
-#sigEditorModal .panel .sig-tools #sigTextToggle{background:var(--tool-btn-bg);color:var(--tool-btn-color);border:none;width:34px;height:34px;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#sigEditorModal .panel .sig-tools #sigTextToggle.active{background:var(--tool-btn-active-bg);color:var(--tool-btn-active-color)}
 #sigEditorModal .panel .actions{display:flex;gap:8px;padding:0 20px 16px}
 #sigEditorModal .panel .actions button{flex:1;padding:10px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer}
 #sigEditorModal .panel .actions #sigEditorSaveBtn{background:var(--save-btn-bg);color:var(--save-btn-color)}
@@ -163,13 +160,6 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
 #sigEditorModal .panel .actions #sigEditorCancelBtn:hover{background:var(--btn-hover)}
 #sigEditorModal .panel .actions #sigEditorClearBtn{background:var(--clear-btn-bg);color:var(--clear-btn-color)}
 #sigEditorModal .panel .actions #sigEditorClearBtn:hover{background:var(--clear-btn-hover)}
-
-/* ── Sig editor text overlay ── */
-.sig-text-overlay{position:absolute;min-width:40px;min-height:24px;cursor:move;z-index:10;touch-action:none}
-.sig-text-overlay .sig-text-content{width:100%;height:100%;outline:none;padding:4px 6px;font-family:sans-serif;overflow:hidden;word-wrap:break-word;white-space:pre-wrap;border:1px dashed transparent;border-radius:3px;color:var(--text);min-height:24px}
-.sig-text-overlay.selected .sig-text-content{border-color:var(--text-box-border);background:var(--text-box-bg)}
-.sig-text-overlay .sig-text-delete{position:absolute;top:-24px;right:0;width:20px;height:20px;background:var(--accent);color:#fff;border:none;border-radius:3px;font-size:12px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:11}
-.sig-text-overlay.selected .sig-text-delete{display:flex}
 
 /* ── Signature manager ── */
 #sigManagerModal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
@@ -284,13 +274,13 @@ html,body,header,#navBar,#controls,#emptyState,#loading,#toast,.text-box .text-c
   <div class="panel">
     <h2>✍️ Dibujar firma</h2>
     <div class="body">
-      <div class="sig-canvas-wrap" id="sigCanvasWrap">
-        <canvas id="sigCanvas" width="600" height="200"></canvas>
-      </div>
+      <canvas id="sigCanvas" width="500" height="200"></canvas>
       <div class="sig-tools">
         <label>🎨 <input type="color" id="sigPenColor" value="#000000"></label>
         <label>─ <input type="range" id="sigPenWidth" min="1" max="8" value="2"></label>
-        <button id="sigTextToggle">T</button>
+      </div>
+      <div style="margin-top:10px">
+        <input type="text" id="sigTextInput" placeholder="Texto opcional para la firma..." style="width:100%;padding:10px 12px;border:2px solid var(--input-border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);box-sizing:border-box;outline:none">
       </div>
     </div>
     <div class="actions">
@@ -1195,20 +1185,10 @@ const sigEditorClearBtn = $('sigEditorClearBtn');
 const sigManagerModal = $('sigManagerModal');
 const sigManagerBody = $('sigManagerBody');
 const sigManagerCloseBtn = $('sigManagerCloseBtn');
-const sigTextToggle = $('sigTextToggle');
-const sigCanvasWrap = $('sigCanvasWrap');
+const sigTextInput = $('sigTextInput');
 let _sigDrawing = false;
 let _sigLastX = 0;
 let _sigLastY = 0;
-let _sigTexts = [];
-let _sigTextMode = false;
-let _sigTextIdCounter = 0;
-let _sigSelectedTextId = null;
-let _sigTextDragStartX = 0;
-let _sigTextDragStartY = 0;
-let _sigTextDragOrigX = 0;
-let _sigTextDragOrigY = 0;
-let _sigDraggingText = false;
 
 function loadSavedSignatures() {
   try {
@@ -1228,124 +1208,13 @@ sigCtx.lineJoin = 'round';
 sigPenColor.addEventListener('input', () => { sigCtx.strokeStyle = sigPenColor.value; });
 sigPenWidth.addEventListener('input', () => { sigCtx.lineWidth = Number(sigPenWidth.value); });
 
-sigTextToggle.addEventListener('click', () => {
-  _sigTextMode = !_sigTextMode;
-  sigTextToggle.classList.toggle('active', _sigTextMode);
-  sigCanvas.style.cursor = _sigTextMode ? 'text' : 'crosshair';
-  if (!_sigTextMode) _sigSelectedTextId = null;
-});
-
-/* ── Sig editor text overlay ── */
-function sigCreateText(x, y) {
-  const id = ++_sigTextIdCounter;
-  const wrap = sigCanvasWrap.getBoundingClientRect();
-  const cvs = sigCanvas.getBoundingClientRect();
-  const relX = (cvs.left - wrap.left) + x;
-  const relY = (cvs.top - wrap.top) + y;
-  const item = { id, text: '', x: relX - 4, y: relY - 4, w: 120, h: 28, fontSize: 16, fontColor: sigPenColor.value };
-  _sigTexts.push(item);
-  sigRenderTextDOM(item);
-  sigSelectText(id);
-  setTimeout(() => {
-    const el = document.querySelector(`.sig-text-overlay[data-id="${id}"] .sig-text-content`);
-    if (el) el.focus();
-  }, 0);
-}
-
-function sigRenderTextDOM(item) {
-  const el = document.createElement('div');
-  el.className = 'sig-text-overlay';
-  el.dataset.id = item.id;
-  el.style.left = item.x + 'px';
-  el.style.top = item.y + 'px';
-  el.style.width = item.w + 'px';
-  el.style.height = item.h + 'px';
-  const content = document.createElement('div');
-  content.className = 'sig-text-content';
-  content.contentEditable = true;
-  content.textContent = item.text;
-  content.style.fontSize = item.fontSize + 'px';
-  content.style.color = item.fontColor;
-  el.appendChild(content);
-  const del = document.createElement('button');
-  del.className = 'sig-text-delete';
-  del.textContent = '✕';
-  el.appendChild(del);
-  sigCanvasWrap.appendChild(el);
-  content.addEventListener('input', () => {
-    const it = _sigTexts.find(t => t.id === item.id);
-    if (it) it.text = content.textContent || '';
-  });
-  el.addEventListener('pointerdown', e => {
-    e.stopPropagation();
-    const tid = Number(el.dataset.id);
-    sigSelectText(tid);
-    _sigTextDragStartX = e.clientX;
-    _sigTextDragStartY = e.clientY;
-    const it = _sigTexts.find(t => t.id === tid);
-    if (it) { _sigTextDragOrigX = it.x; _sigTextDragOrigY = it.y; }
-    document.addEventListener('pointermove', _sigTextDragMove);
-    document.addEventListener('pointerup', _sigTextDragEnd);
-  });
-  del.addEventListener('pointerdown', e => {
-    e.stopPropagation();
-    sigDeleteText(item.id);
-  });
-}
-
-function sigSelectText(id) {
-  sigCanvasWrap.querySelectorAll('.sig-text-overlay').forEach(el => el.classList.remove('selected'));
-  _sigSelectedTextId = id;
-  if (id !== null) {
-    const el = sigCanvasWrap.querySelector(`.sig-text-overlay[data-id="${id}"]`);
-    if (el) el.classList.add('selected');
-  }
-}
-
-function sigDeleteText(id) {
-  const el = sigCanvasWrap.querySelector(`.sig-text-overlay[data-id="${id}"]`);
-  if (el) el.remove();
-  _sigTexts = _sigTexts.filter(t => t.id !== id);
-  if (_sigSelectedTextId === id) _sigSelectedTextId = null;
-}
-
-function sigRemoveAllTexts() {
-  sigCanvasWrap.querySelectorAll('.sig-text-overlay').forEach(el => el.remove());
-  _sigTexts = [];
-  _sigSelectedTextId = null;
-}
-
-function _sigTextDragMove(e) {
-  const it = _sigTexts.find(t => t.id === _sigSelectedTextId);
-  if (!it) return;
-  const dx = e.clientX - _sigTextDragStartX;
-  const dy = e.clientY - _sigTextDragStartY;
-  it.x = Math.max(0, _sigTextDragOrigX + dx);
-  it.y = Math.max(0, _sigTextDragOrigY + dy);
-  const el = sigCanvasWrap.querySelector(`.sig-text-overlay[data-id="${it.id}"]`);
-  if (el) { el.style.left = it.x + 'px'; el.style.top = it.y + 'px'; }
-}
-
-function _sigTextDragEnd() {
-  document.removeEventListener('pointermove', _sigTextDragMove);
-  document.removeEventListener('pointerup', _sigTextDragEnd);
-}
-
 function sigStart(e) {
-  if (_sigTextMode) {
-    const r = sigCanvas.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
-    sigCreateText(x, y);
-    return;
-  }
   e.preventDefault(); _sigDrawing = true;
   const r = sigCanvas.getBoundingClientRect();
   _sigLastX = e.clientX - r.left; _sigLastY = e.clientY - r.top;
   sigCtx.beginPath(); sigCtx.moveTo(_sigLastX, _sigLastY);
 }
 function sigMove(e) {
-  if (_sigTextMode) return;
   if (!_sigDrawing) return; e.preventDefault();
   const r = sigCanvas.getBoundingClientRect();
   const x = e.clientX - r.left; const y = e.clientY - r.top;
@@ -1362,53 +1231,51 @@ sigCanvas.addEventListener('pointerleave', sigEnd);
 
 function clearSigCanvas() {
   sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-  sigRemoveAllTexts();
 }
 
 sigEditorClearBtn.addEventListener('click', clearSigCanvas);
 
 sigEditorCancelBtn.addEventListener('click', () => {
   sigEditorModal.classList.remove('active');
-  sigRemoveAllTexts();
+  clearSigCanvas();
+  sigTextInput.value = '';
 });
 sigEditorModal.addEventListener('click', e => {
-  if (e.target === sigEditorModal) { sigEditorModal.classList.remove('active'); sigRemoveAllTexts(); }
+  if (e.target === sigEditorModal) { sigEditorModal.classList.remove('active'); clearSigCanvas(); sigTextInput.value = ''; }
 });
 
 sigEditorSaveBtn.addEventListener('click', () => {
-  _sigTexts.forEach(item => {
-    if (!item.text) return;
-    const wrapRect = sigCanvasWrap.getBoundingClientRect();
-    const cvsRect = sigCanvas.getBoundingClientRect();
-    const scaleX = sigCanvas.width / cvsRect.width;
-    const scaleY = sigCanvas.height / cvsRect.height;
-    const cvsX = (item.x - (cvsRect.left - wrapRect.left)) * scaleX;
-    const cvsY = (item.y - (cvsRect.top - wrapRect.top)) * scaleY;
+  const text = sigTextInput.value.trim();
+  if (text) {
     sigCtx.save();
-    sigCtx.font = item.fontSize + 'px sans-serif';
-    sigCtx.fillStyle = item.fontColor;
-    sigCtx.textBaseline = 'top';
-    const lines = item.text.split('\n');
-    lines.forEach((line, i) => {
-      sigCtx.fillText(line, cvsX + 6, cvsY + 4 + item.fontSize * i);
-    });
+    let fontSize = 18;
+    const maxW = sigCanvas.width - 24;
+    const tempCtx = document.createElement('canvas').getContext('2d');
+    while (fontSize > 8) {
+      tempCtx.font = 'bold ' + fontSize + 'px sans-serif';
+      if (tempCtx.measureText(text).width <= maxW) break;
+      fontSize -= 2;
+    }
+    sigCtx.font = 'bold ' + fontSize + 'px sans-serif';
+    sigCtx.fillStyle = sigPenColor.value;
+    sigCtx.textAlign = 'center';
+    sigCtx.textBaseline = 'bottom';
+    sigCtx.fillText(text, sigCanvas.width / 2, sigCanvas.height - 6);
     sigCtx.restore();
-  });
+  }
   const dataUrl = sigCanvas.toDataURL('image/png');
   const num = state.savedSignatures.length + 1;
   const sig = { id: Date.now(), name: 'Firma ' + num, dataUrl, width: sigCanvas.width, height: sigCanvas.height };
   state.savedSignatures.push(sig);
   saveSignaturesToStorage();
   sigEditorModal.classList.remove('active');
-  sigRemoveAllTexts();
+  clearSigCanvas();
+  sigTextInput.value = '';
   showToast('Firma guardada como "' + sig.name + '" ✓');
 });
 
 saveSigBtn.addEventListener('click', () => {
   if (!state.file) { showToast('Abre un PDF primero'); return; }
-  _sigTextMode = false;
-  sigTextToggle.classList.remove('active');
-  sigCanvas.style.cursor = 'crosshair';
   sigEditorModal.classList.add('active');
 });
 
